@@ -4,10 +4,10 @@ import Heading from "./heading";
 import Players from '../Players/players';
 import Leagues from '../Leagues/leagues';
 import Leaguemates from '../Leaguemates/leaguemates';
-//import Trades from '../Trades/trades';
+import Trades from '../Trades/trades';
 import Lineups from "../Lineups/lineups";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchFilteredData } from "../../actions/actions";
+import { fetchFilteredData, fetchLmTrades } from "../../actions/actions";
 
 const View = ({ }) => {
     const dispatch = useDispatch()
@@ -22,8 +22,12 @@ const View = ({ }) => {
     useEffect(() => {
         dispatch(fetchFilteredData(type1, type2, leagues, leaguemates, playerShares));
 
+       
 
     }, [user, leagues, type1, type2, leaguemates, playerShares])
+
+
+   
 
     console.log([tab, type1, type2])
     let display;
@@ -43,7 +47,7 @@ const View = ({ }) => {
             />
             break;
         case 'Trades':
-            display = null
+            display = <Trades />
             break;
         case 'Lineups':
             display = <Lineups />

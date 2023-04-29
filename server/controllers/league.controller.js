@@ -195,17 +195,22 @@ const getLeagueDetails = async (league_id) => {
 }
 
 const getBatchLeaguesDetails = async (leagueIds) => {
+    console.log({leagueIds: leagueIds})
     const allResults = [];
-
-    for (const leagueId of leagueIds) {
-        const results = await getLeagueDetails(leagueId);
-        if (results !== null) {
-            allResults.push(results);
-        }
+  
+    const chunkSize = 50;
+  
+    for (let i = 0; i < leagueIds.length; i += chunkSize) {
+      const chunk = leagueIds.slice(i, i + chunkSize);
+      const chunkResults = await Promise.all(chunk.map(async (leagueId) => {
+        const result = await getLeagueDetails(leagueId);
+        return result !== null ? result : undefined;
+      }));
+      allResults.push(...chunkResults);
     }
-
-    return allResults;
-}
+  
+    return allResults.filter(result => result !== undefined);
+  }
 
 const getLeaguesToUpsert = async (user_id, league_ids) => {
     let user;

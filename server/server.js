@@ -26,7 +26,7 @@ function start() {
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
     const db = require('./models');
-    db.sequelize.sync()
+    db.sequelize.sync({alter: true})
         .then(() => {
             console.log("Synced db.");
         })
@@ -38,6 +38,7 @@ function start() {
     require('./routes/league.routes')(app)
     require('./routes/home.routes')(app)
     require('./routes/dynastyrankings.routes')(app)
+    require('./routes/trade.routes')(app)
 
 
 
