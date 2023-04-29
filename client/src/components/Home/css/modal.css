@@ -1,0 +1,63 @@
+div.modal {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: transparent;
+}
+
+div.modal-grid {
+    width: 80rem;
+    height: fit-content;
+    max-height: 80rem;
+    background-color: midnightblue;
+    margin: auto;
+    font-size: 3.5rem;
+    position: relative;
+    padding: 5rem;
+
+}
+
+div.modal-grid-item {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    padding-bottom: 5rem;
+}
+
+div.modal-grid-content.header {
+    grid-column: 1 / span 3;
+}
+
+div.modal-grid-content.one {
+    grid-column: 1 / span 1;
+}
+
+div.modal-grid-content.two {
+    grid-column: 2 / span 1;
+}
+
+div.modal-grid-content.three {
+    grid-column: 3 / span 1;
+}
+
+div.modal input {
+    font-size: 2rem;
+}
+
+
+
+div.modal label {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+div.modal select {
+    background-color: var(--color2);
+}
+
+button.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

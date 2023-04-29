@@ -1,0 +1,182 @@
+img.home,
+div.home_wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+div.home_wrapper {
+    height: fit-content;
+}
+
+img.home {
+    filter: brightness(0.25) drop-shadow(0 0 3rem white);
+    height: 75rem;
+}
+
+strong.home {
+    font-family: 'Pulang', sans-serif;
+    font-size: 25rem;
+    color: var(--color2);
+    text-shadow: 0 0 5rem black;
+}
+
+input.home,
+select.home {
+    color: black;
+    background-color: var(--color2);
+    opacity: .8;
+    border: 2rem ridge var(--color3);
+    font-size: 7rem;
+    border-radius: 5rem;
+    box-shadow: inset 0 0 2.5rem black;
+    font-weight: 900;
+    font-family: 'Ubuntu Mono', sans-serif;
+    padding: 2rem;
+}
+
+input.home {
+    width: 40rem;
+    padding-left: 5rem;
+}
+
+
+div.user_input {
+    position: relative;
+    width: fit-content;
+    margin: auto;
+}
+
+select.home {
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+}
+
+button.home {
+    background-color: var(--color3);
+    padding: 1.5rem;
+    font-size: 4rem;
+    color: white;
+    font-family: 'Ubuntu Mono', sans-serif;
+    margin: auto;
+    margin-top: 3rem;
+    border: .5rem ridge white;
+    border-radius: 2rem;
+}
+
+div.picktracker button {
+    background-color: var(--color3);
+    padding: 1rem;
+    font-size: 2rem;
+    color: white;
+    font-family: 'Ubuntu Mono', sans-serif;
+    margin: auto;
+    border: .5rem ridge white;
+    border-radius: 2rem;
+}
+
+input.home,
+button.home {
+    filter: drop-shadow(0 0 1.5rem black);
+}
+
+div.picktracker {
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+p.home {
+    color: var(--color2);
+    filter: brightness(2);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+input.picktracker {
+    color: black;
+    background-color: var(--color2);
+    float: left;
+    border: .5rem ridge var(--color3);
+    font-size: 3rem;
+    border-radius: 5rem;
+    box-shadow: inset 0 0 2.5rem black;
+    font-weight: 900;
+    font-family: 'Ubuntu Mono', sans-serif;
+    width: 25rem;
+}
+
+i.fa-solid.fa-ranking-star {
+    font-size: 7rem;
+    position: absolute;
+    color: var(--te);
+    top: 0;
+    right: -8.rem;
+    bottom: 0;
+    margin: auto;
+    width: fit-content;
+    height: fit-content;
+}
+
+span.leagues_count {
+    font-size: 4rem;
+    line-height: 7rem;
+    margin: 0 5%;
+}
+
+p.dropdown_header {
+    position: absolute;
+    font-size: 4rem;
+    left: 0;
+    right: 0;
+    background-color: midnightblue;
+    z-index: 5;
+    line-height: 7rem;
+}
+
+div.dropdown_wrapper {
+    position: absolute;
+    width: 50rem;
+    height: 75rem;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 11;
+    border: 10rem solid transparent;
+    box-sizing: content-box;
+}
+
+ol.dropdown>li>button>p {
+    white-space: nowrap;
+}
+
+div#homepage ol.dropdown>li>button>p {
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+}
+
+ol.dropdown>li>button>p span.username {
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    padding: 0;
+}
+
+ol.dropdown>li>button>p span.username:hover {
+    overflow: visible;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

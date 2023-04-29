@@ -1,0 +1,341 @@
+html,
+body {
+  --color1: rgb(0, 0, 25);
+  --color2: #00ceb8;
+  --color3: midnightblue;
+  --color4: #1a1c20;
+  --sticky1: 0rem;
+  --sticky2: 7rem;
+  --sticky3: 14rem;
+  --qb: #ff2a6d;
+  --rb: #00ceb8;
+  --wr: #58a7ff;
+  --te: #ffae58;
+  font-size: 1vmin;
+  background-color: var(--color1);
+
+  text-align: center;
+  color: white;
+
+  overflow-x: hidden;
+  width: 100vw;
+  height: 100vh;
+
+}
+
+.App {
+  font-family: 'Ubuntu Mono', sans-serif;
+
+  margin: auto;
+  padding-bottom: 25%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  margin: auto;
+  width: fit-content;
+}
+
+img {
+  border-radius: 50%;
+}
+
+img.thumbnail {
+  height: 7rem;
+  width: 7rem;
+  margin: 0;
+  margin-right: 1rem;
+  vertical-align: middle;
+
+}
+
+.float_right {
+  float: right;
+  margin-right: 5%;
+
+}
+
+.click:hover {
+  cursor: pointer;
+}
+
+.green {
+  color: greenyellow;
+}
+
+.red,
+.fa-solid.fa-circle-exclamation {
+  color: red;
+}
+
+
+.yellow {
+  color: gold
+}
+
+ol li {
+  list-style: none;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+}
+
+label {
+  display: flex;
+  width: fit-content;
+  margin: auto;
+}
+
+input::placeholder {
+  color: black;
+  opacity: .5;
+  font-family: 'Ubuntu Mono', sans-serif;
+}
+
+::-webkit-scrollbar {
+  background-color: transparent;
+  width: 1rem;
+  height: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color2);
+}
+
+table {
+  table-layout: fixed;
+  margin: auto;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  max-width: 1250px;
+}
+
+.left {
+  text-align: left;
+  white-space: nowrap;
+  padding-left: 1rem;
+}
+
+.left p,
+.left div p.left,
+.left li {
+  margin: 0;
+  margin-right: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: fit-content;
+
+}
+
+.left li {
+  height: 3rem;
+}
+
+
+.left:hover p:only-of-type,
+.left:hover div p:only-of-type,
+.left li:hover,
+.left li.end:hover {
+  overflow: visible;
+  width: fit-content;
+  min-width: 90%;
+  position: relative;
+  z-index: 9;
+  background-color: black;
+}
+
+.left:hover p:only-of-type,
+.left:hover div p:only-of-type {
+  outline: 1rem solid black;
+  filter: drop-shadow(0 0 1rem white);
+  position: relative;
+  z-index: 12;
+}
+
+
+
+.left li:hover>span.end {
+  position: absolute;
+  min-width: fit-content;
+  height: 3rem;
+  background-color: inherit;
+  outline: .5rem solid black;
+  direction: ltr;
+}
+
+
+.end:hover {
+  direction: rtl;
+
+}
+
+span.end {
+  direction: ltr;
+  right: 0;
+  width: 100%;
+}
+
+select {
+  background-color: transparent;
+  font-size: inherit;
+  padding: 1rem;
+  padding-right: 0;
+  margin-bottom: 3rem;
+  color: inherit;
+  text-align: center;
+  font-family: inherit;
+  border: none;
+  appearance: none;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+div.loading_wrapper {
+  height: fit-content;
+  display: flex;
+  padding: 2rem;
+}
+
+div.loading {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  width: 90%;
+  height: 100%;
+  margin: auto;
+
+}
+
+img.loading {
+  width: 75rem;
+  height: auto;
+  margin: auto;
+  vertical-align: middle;
+  padding: 12.5rem;
+}
+
+
+
+.z_one,
+.z_two,
+.z_three {
+  position: absolute;
+  font-size: 10rem;
+  color: rgb(0, 195, 255);
+
+  opacity: 0;
+  filter: brightness(2);
+  animation-name: snooze;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  animation-duration: 3s;
+}
+
+.z_two {
+  animation-delay: .5s;
+}
+
+.z_three {
+  animation-delay: 1.5s;
+}
+
+@keyframes snooze {
+  0% {
+    transform: translateY(0rem) translateX(0rem);
+    font-size: 10rem;
+    opacity: 0;
+  }
+
+  10% {
+    transform: translateY(-10rem) translateX(5rem);
+    font-size: 11rem;
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100rem) translateX(50rem);
+    font-size: 20rem;
+    opacity: 1;
+  }
+}
+
+label.upload {
+  font-size: 2rem;
+  display: inline;
+  margin: 2rem;
+  width: fit-content;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+h1 {
+  position: relative;
+}
+
+
+.hidden {
+  display: none;
+}
+
+
+.tooltip_content {
+
+  background-color: var(--color3);
+  font-size: 3rem;
+  width: 75rem;
+  white-space: nowrap;
+  position: absolute;
+  z-index: 100;
+  left: 50%;
+  top: 5rem;
+  transform: translate(-50%, 0);
+  max-height: 50rem;
+  font-family: 'Ubuntu Mono',
+    sans-serif;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 2rem ridge var(--color2);
+  box-shadow: 0 0 5rem var(--color2);
+}
+
+.tooltip_content table {
+  table-layout: fixed;
+}
+
+.tooltip_content thead {
+  position: sticky;
+  top: 0;
+  z-index: 101;
+}
+
+.tooltip_content table td,
+.tooltip_content table th {
+  box-shadow: inset 0 0 1rem black;
+  text-shadow: 0 0 .25rem black, 0 0 .5rem black;
+  padding: 1rem;
+  height: 5rem;
+
+  background-color: var(--color3);
+}
+
+input[type='number'] {
+  width: 5rem
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

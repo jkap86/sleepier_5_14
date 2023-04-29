@@ -1,0 +1,174 @@
+a.home,
+p.home {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 3rem;
+    display: block;
+    width: fit-content;
+    text-align: left;
+    padding: 2rem 0 0 2rem;
+    margin: 0;
+}
+
+div.navbar,
+div.switch_wrapper {
+    display: flex;
+    margin: auto;
+    padding: 0;
+
+}
+
+div.navbar,
+div.switch {
+    background-color: black;
+    border-radius: 2rem;
+    filter: drop-shadow(0 0 .5rem white) brightness(2);
+
+}
+
+select.trades,
+select.nav.active {
+    opacity: 0;
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+}
+
+div.navbar>p {
+    position: absolute;
+    font-size: 3rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: var(--color2);
+    white-space: nowrap;
+}
+
+
+
+div.navbar {
+    width: fit-content;
+    height: fit-content;
+    background-color: transparent;
+    filter: brightness(2);
+    margin: auto;
+    position: relative;
+
+}
+
+div.switch_wrapper {
+    max-width: 100%;
+    padding: 1rem 0;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+    margin: auto;
+}
+
+div.switch {
+    display: flex;
+    width: fit-content;
+
+}
+
+select.nav,
+button.sw {
+    background-color: transparent;
+
+    border: none;
+    padding: .5rem;
+    border: .25rem solid transparent;
+    font-family: 'GROUPE', sans-serif;
+    font-size: 3rem;
+    text-align: center;
+}
+
+select.nav {
+    color: var(--color2);
+    filter: brightness(2);
+}
+
+
+select.view {
+    background-color: inherit;
+    color: var(--color2);
+    font-family: inherit;
+    text-align: center;
+    font-size: 3rem;
+    border: none;
+    font-weight: 900;
+}
+
+p.image {
+    position: relative;
+    color: var(--color2);
+    z-index: 10;
+    line-height: 15rem;
+}
+
+p.image>img {
+    width: 15rem;
+    height: 15rem;
+    margin: auto;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: .85;
+    box-shadow: 0 0 1rem white;
+}
+
+p.image>strong {
+    position: relative;
+    z-index: 2;
+    font-size: 7rem;
+    text-shadow: 0 0 1rem black;
+    font-family: 'Pulang', sans-serif;
+}
+
+button.sw {
+    color: var(--color4);
+    padding: 1rem;
+}
+
+button.sw:first-of-type,
+button.sw:last-of-type {
+    width: 50%;
+}
+
+button.nav.active,
+button.sw.active {
+    color: var(--color2);
+    filter: brightness(2) contrast(2);
+    text-shadow: 0 0 .25rem black;
+    font-family: 'GROUPE', sans-serif;
+
+}
+
+button.sw.active {
+    background-color: var(--color5);
+    border-radius: 2rem;
+    border: .25rem solid var(--color2);
+    filter: brightness(2) contrast(2);
+}
+
+h1 {
+    font-size: 3rem;
+    color: var(--color2);
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 3rem;
+    margin: 2rem auto;
+}
+
+h4,
+div.primary.nav {
+    font-size: 3rem;
+    background-color: inherit;
+}

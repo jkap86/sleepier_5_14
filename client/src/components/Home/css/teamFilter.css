@@ -1,0 +1,94 @@
+span.team {
+    display: inline-flex;
+    vertical-align: top;
+    width: fit-content;
+}
+
+.hidden_behind {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    font-size: 3rem;
+    background-color: transparent;
+    border: none;
+    color: transparent;
+    opacity: 0;
+    margin: 0;
+    width: 100%;
+}
+
+span.team>label {
+    position: relative;
+    width: fit-content;
+    filter: drop-shadow(0 0 .5rem var(--color2));
+}
+
+div.position_square1,
+div.position_square2,
+div.position_square3,
+div.position_square4 {
+    font-size: 2.5rem;
+    display: flex;
+    height: 7rem;
+    width: 7rem;
+    flex-wrap: wrap;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+div.position_square1>div {
+    width: 100%;
+}
+
+div.position_square2>div {
+    width: 50%;
+}
+
+div.position_square3>div {
+    width: 33%;
+}
+
+div.position_square4>div {
+    flex-basis: 50%;
+}
+
+div.position_square1>div,
+div.position_square2>div,
+div.position_square3>div,
+div.position_square4>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    text-shadow: 0 0 .5rem white;
+    font-weight: 900;
+    font-size: 3rem;
+}
+
+div.qb {
+    background-color: var(--qb);
+}
+
+div.wr {
+    background-color: var(--wr);
+}
+
+div.te {
+    background-color: var(--te);
+
+}
+
+div.rb {
+    background-color: var(--rb);
+}
+
+div.position_square1>div.picks {
+    background-color: midnightblue;
+    color: white;
+    text-shadow: none;
+}
+
+.icon {
+    width: 7rem
+}
