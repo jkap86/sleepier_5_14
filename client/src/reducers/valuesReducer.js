@@ -1,3 +1,5 @@
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = {
     isLoading: false,
     dynastyValues: [],
@@ -17,6 +19,10 @@ const dynastyValuesReducer = (state = initialState, action) => {
             };
         case 'FETCH_DYNASTY_VALUES_FAILURE':
             return { ...state, isLoading: false, error: action.payload };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }

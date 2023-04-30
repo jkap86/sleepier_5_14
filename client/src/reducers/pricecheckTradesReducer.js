@@ -1,3 +1,5 @@
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = {
     isLoading: false,
     pricecheckTrades: [],
@@ -21,6 +23,10 @@ const pricecheckTradesReducer = (state = initialState, action) => {
             return { ...state, isLoading: false, pricecheckTrades: [...state.pricecheckTrades.filter(s => !(s.player === action.payload.player && s.manager === action.payload.manager)), updated_search] };
         case 'FETCH_PRICECHECK_FAILURE':
             return { ...state, isLoading: false, error: action.payload };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }

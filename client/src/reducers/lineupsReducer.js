@@ -1,3 +1,5 @@
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = {
     rankings: {},
     notMatched: [],
@@ -14,6 +16,10 @@ const lineupsReducer = (state = initialState, action) => {
                 notMatched: action.payload.notMatched,
                 filename: action.payload.filename,
                 error: action.payload.error
+            };
+        case RESET_STATE:
+            return {
+                ...initialState
             };
         default:
             return state;

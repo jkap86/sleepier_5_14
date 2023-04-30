@@ -1,3 +1,4 @@
+import { RESET_STATE } from '../actions/actions';
 
 const initialState = {
     tab: 'Players',
@@ -34,7 +35,11 @@ const tabReducer = (state = initialState, action) => {
             return {
                 ...state,
                 trendDateEnd: action.payload
-            }
+            };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }

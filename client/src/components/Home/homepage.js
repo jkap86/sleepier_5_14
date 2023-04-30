@@ -2,13 +2,19 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import sleeperLogo from '../../images/sleeper_icon.png';
 import './css/homepage.css';
+import { useDispatch, useSelector } from "react-redux";
+import {resetState} from '../../actions/actions';
 
 
 const Homepage = () => {
+    const dispatch = useDispatch();
     const [username, setUsername] = useState('')
     const [leagueId, setLeagueId] = useState('')
     const [tab, setTab] = useState('username')
 
+    useEffect(() => {
+        dispatch(resetState());
+    }, [dispatch])
 
     return <div id='homepage'>
         <div className='picktracker'>

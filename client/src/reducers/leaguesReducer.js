@@ -1,3 +1,6 @@
+
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = {
     isLoading: false,
     state: {},
@@ -29,6 +32,10 @@ const leaguesReducer = (state = initialState, action) => {
             };
         case 'FETCH_LEAGUES_FAILURE':
             return { ...state, isLoading: false, error: action.payload };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }

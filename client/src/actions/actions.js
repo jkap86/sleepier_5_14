@@ -3,6 +3,14 @@ import { getLeagueData } from '../components/Functions/getLeagueData';
 import { getTradeTips } from '../components/Functions/getTradeTips';
 import { filterData } from '../components/Functions/filterData';
 
+
+export const RESET_STATE = 'RESET_STATE';
+
+export const resetState = () => ({
+  type: RESET_STATE
+});
+
+
 export const fetchUser = (username) => {
     return async (dispatch) => {
         dispatch({ type: 'FETCH_USER_START' });
@@ -30,6 +38,7 @@ export const fetchLeagues = (user_id) => {
                 axios.get('/home'),
                 axios.post('/league/find', { user_id: user_id }),
             ]);
+            console.log(home.data.allplayers)
 
             const data = getLeagueData(leagues.data, user_id, home.data.state)
 
@@ -46,6 +55,7 @@ export const fetchLeagues = (user_id) => {
             })
 
         } catch (error) {
+            console.log(error)
             dispatch({ type: 'FETCH_LEAGUES_FAILURE', payload: error.message });
         }
     };

@@ -1,3 +1,5 @@
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = {
     isLoading: false,
     leaguesFiltered: [],
@@ -20,6 +22,10 @@ const filteredDataReducer = (state = initialState, action) => {
             };
         case 'FETCH_FILTERED_DATA_FAILURE':
             return { ...state, isLoading: false, error: action.payload };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }

@@ -1,3 +1,5 @@
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = {
     isLoading: false,
     lmTrades: {
@@ -27,6 +29,10 @@ const lmTradesReducer = (state = initialState, action) => {
         case 'FETCH_LMTRADES_FAILURE':
             console.log(action.type)
             return { ...state, isLoading: false, error: action.payload };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }

@@ -12,74 +12,78 @@ export const getLeagueData = (leagues, user_id, state) => {
                 ...league,
                 userRoster: userRoster
             })
-            league.rosters?.map(roster => {
-                roster.players?.map(player_id => {
-                    let player_leagues = players_all[player_id] || {
-                        owned: [],
-                        taken: [],
-                        available: []
-                    }
+            if (league.rosters && league.rosters.length > 0) {
+                league.rosters.map(roster => {
+                    if (roster.players && roster.players.length > 0) {
+                        roster.players?.map(player_id => {
+                            let player_leagues = players_all[player_id] || {
+                                owned: [],
+                                taken: [],
+                                available: []
+                            }
 
-                    if (roster.user_id === user_id) {
-                        player_leagues.owned.push({
-                            ...league,
-                            userRoster: roster
+                            if (roster.user_id === user_id) {
+                                player_leagues.owned.push({
+                                    ...league,
+                                    userRoster: roster
+                                })
+                            } else {
+                                player_leagues.taken.push({
+                                    ...league,
+                                    lmRoster: roster,
+                                    userRoster: userRoster,
+
+                                })
+                            }
+                            players_all[player_id] = player_leagues
+
                         })
-                    } else {
-                        player_leagues.taken.push({
+                    }
+                    if (roster.draft_picks && roster.draft_picks.length > 0) {
+                        roster.draft_picks.map(pick => {
+                            const pick_text = `${pick.season}_${pick.round}_${pick.order?.toLocaleString("en-US", { minimumIntegerDigits: 2 })}`
+                            let pick_leagues = players_all[pick_text] || {
+                                owned: [],
+                                taken: []
+                            }
+
+                            if (pick.season === parseInt(state.league_season) && parseInt(pick.order)) {
+                                if (roster.user_id === user_id) {
+                                    pick_leagues.owned.push({
+                                        ...league,
+                                        userRoster: roster
+                                    })
+                                } else {
+                                    pick_leagues.taken.push({
+                                        ...league,
+                                        lmRoster: roster,
+                                        userRoster: userRoster,
+
+                                    })
+                                }
+                                players_all[pick_text] = pick_leagues
+                            }
+
+                        })
+                    }
+                    if (roster.user_id && roster.players && roster.players.length > 0) {
+                        let leaguemate_leagues = leaguemates_all[roster.user_id] || {
+                            user_id: roster.user_id,
+                            username: roster.username,
+                            avatar: roster.avatar,
+                            leagues: []
+                        }
+
+                        leaguemate_leagues.leagues.push({
                             ...league,
                             lmRoster: roster,
-                            userRoster: userRoster,
-
+                            userRoster: userRoster
                         })
-                    }
-                    players_all[player_id] = player_leagues
 
+                        leaguemates_all[roster.user_id] = leaguemate_leagues
+                    }
                 })
-
-                roster.draft_picks.map(pick => {
-                    const pick_text = `${pick.season}_${pick.round}_${pick.order?.toLocaleString("en-US", { minimumIntegerDigits: 2 })}`
-                    let pick_leagues = players_all[pick_text] || {
-                        owned: [],
-                        taken: []
-                    }
-
-                    if (pick.season === parseInt(state.league_season) && parseInt(pick.order)) {
-                        if (roster.user_id === user_id) {
-                            pick_leagues.owned.push({
-                                ...league,
-                                userRoster: roster
-                            })
-                        } else {
-                            pick_leagues.taken.push({
-                                ...league,
-                                lmRoster: roster,
-                                userRoster: userRoster,
-
-                            })
-                        }
-                        players_all[pick_text] = pick_leagues
-                    }
-
-                })
-
-                if (roster.user_id && roster.players) {
-                    let leaguemate_leagues = leaguemates_all[roster.user_id] || {
-                        user_id: roster.user_id,
-                        username: roster.username,
-                        avatar: roster.avatar,
-                        leagues: []
-                    }
-
-                    leaguemate_leagues.leagues.push({
-                        ...league,
-                        lmRoster: roster,
-                        userRoster: userRoster
-                    })
-
-                    leaguemates_all[roster.user_id] = leaguemate_leagues
-                }
-            })
+            }
         }
     })
 

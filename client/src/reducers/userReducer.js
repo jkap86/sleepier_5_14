@@ -1,3 +1,5 @@
+import { RESET_STATE } from '../actions/actions';
+
 const initialState = { isLoading: false, user: {}, error: null };
 
 const userReducer = (state = initialState, action) => {
@@ -8,6 +10,10 @@ const userReducer = (state = initialState, action) => {
             return { ...state, isLoading: false, user: action.payload };
         case 'FETCH_USER_FAILURE':
             return { ...state, isLoading: false, error: action.payload };
+        case RESET_STATE:
+            return {
+                ...initialState
+            };
         default:
             return state;
     }
