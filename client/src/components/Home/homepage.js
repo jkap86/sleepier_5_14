@@ -4,14 +4,22 @@ import sleeperLogo from '../../images/sleeper_icon.png';
 import './css/homepage.css';
 import axios from 'axios';
 import { avatar } from '../Functions/misc';
+import { resetState } from '../../actions/actions';
+import { useDispatch } from 'react-redux';
 
 const Homepage = () => {
+    const dispatch = useDispatch()
     const [username, setUsername] = useState('')
     const [leagueId, setLeagueId] = useState('')
     const [tab, setTab] = useState('username')
     const [dropdownVisible, setDropdownVisible] = useState(false)
     const [dropdownOptions, setDropdownOptions] = useState([])
     const modalRef = useRef()
+
+    useEffect(() => {
+        dispatch(resetState());
+    }, [dispatch])
+
 
     useEffect(() => {
         const fetchUsers = async () => {
