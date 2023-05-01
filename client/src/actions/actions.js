@@ -7,7 +7,7 @@ import { filterData } from '../components/Functions/filterData';
 export const RESET_STATE = 'RESET_STATE';
 
 export const resetState = () => ({
-  type: RESET_STATE
+    type: RESET_STATE
 });
 
 
@@ -61,14 +61,14 @@ export const fetchLeagues = (user_id) => {
     };
 };
 
-export const fetchLmTrades = (user_id, leaguemates, leagues, season, offset, limit) => {
+export const fetchLmTrades = (user_id, leaguematesDict, leaguemates, leagues, season, offset, limit) => {
     return async (dispatch) => {
         dispatch({ type: 'FETCH_LMTRADES_START' });
 
         try {
             const trades = await axios.post('/trade/leaguemate', {
                 user_id: user_id,
-                leaguemates: leaguemates,
+                leaguemates: Object.keys(leaguematesDict),
                 offset: offset,
                 limit: limit
             })

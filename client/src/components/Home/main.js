@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import View from "./view";
 import { loadingIcon } from "../Functions/misc";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLeagues, fetchLmTrades, fetchUser, setTab, setType1, setType2, resetState} from '../../actions/actions';
+import { fetchLeagues, fetchLmTrades, fetchUser, setTab, setType1, setType2, resetState } from '../../actions/actions';
 
 const Main = () => {
     const params = useParams();
@@ -13,7 +13,7 @@ const Main = () => {
     const { tab, type1, type2 } = useSelector(state => state.tab)
 
 
-    
+
 
 
     useEffect(() => {
@@ -30,19 +30,23 @@ const Main = () => {
         }
     }, [user])
 
-
+    console.log(errorUser?.error)
 
 
     return <>
-        {(!isLoadingUser && !isLoadingLeagues) && (
-            <React.Suspense fallback={loadingIcon}>
-                <View />
-            </React.Suspense>
-        )}
 
-        {isLoadingUser || isLoadingLeagues ? loadingIcon : null}
+        {
+            isLoadingUser || isLoadingLeagues ? loadingIcon
 
-        {errorUser ? <h1>{errorUser}</h1> : null}
+                : errorUser
+                    ? <h1>{errorUser.error}</h1>
+                    :
+                    <React.Suspense fallback={loadingIcon}>
+                        <View />
+                    </React.Suspense>
+        }
+
+
 
     </>
 }

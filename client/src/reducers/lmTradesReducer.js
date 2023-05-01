@@ -30,6 +30,7 @@ const lmTradesReducer = (state = initialState, action) => {
             console.log(action.type)
             return { ...state, isLoading: false, error: action.payload };
         case RESET_STATE:
+            console.log('RESETTING STATE')
             return {
                 ...initialState
             };

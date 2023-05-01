@@ -17,7 +17,7 @@ const Trades = ({
     setStatePriceCheckTrades
 }) => {
     const dispatch = useDispatch();
-
+    const params = useParams();
     const [tab, setTab] = useState('Leaguemate Trades');
     const [page, setPage] = useState(1);
     const [itemActive, setItemActive] = useState('');
@@ -26,7 +26,7 @@ const Trades = ({
     const [searched_manager, setSearched_Manager] = useState('')
     const [pricecheck_player, setPricecheck_player] = useState('')
     const [pricecheck_player2, setPricecheck_player2] = useState('')
-    const [filterType, setFilterType] = useState('Player')
+
     const [tradesDisplay, setTradesDisplay] = useState([])
     const [tradeCount, setTradeCount] = useState(0)
     const { user, isLoading: isLoadingUser, error: errorUser } = useSelector((state) => state.user);
@@ -36,10 +36,9 @@ const Trades = ({
     const { dynastyValues: stateDynastyRankings } = useSelector(state => state.dynastyValues)
     const { pricecheckTrades, isLoading: isLoadingPricecheckTrades, error: errorPcTrades } = useSelector(state => state.pricecheckTrades);
 
-    useEffect(() => {
-        dispatch(fetchLmTrades(user.user_id, leaguematesDict, leagues, stateState.season, 0, 125))
-    }, [])
+
     console.log(searches)
+
     useEffect(() => {
         switch (tab) {
             case 'Leaguemate Trades':
@@ -89,7 +88,7 @@ const Trades = ({
         setSearched_Player('')
         setSearched_Manager('')
         setSearched_League('')
-    }, [tab, filterType])
+    }, [tab])
 
     useEffect(() => {
         setPage(1)

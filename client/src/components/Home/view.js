@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Heading from "./heading";
 import Players from '../Players/players';
@@ -8,9 +9,11 @@ import Trades from '../Trades/trades';
 import Lineups from "../Lineups/lineups";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchFilteredData, fetchLmTrades } from "../../actions/actions";
+import { loadingIcon } from "../Functions/misc";
 
 const View = ({ }) => {
     const dispatch = useDispatch()
+    const params = useParams();
     const { user, isLoading: isLoadingUser, error: errorUser } = useSelector((state) => state.user);
     const { state, allPlayers, nflSchedule, leagues, leaguemates, leaguematesDict, playerShares, isLoading: isLoadingLeagues, error: errorLeagues } = useSelector(state => state.leagues)
     const { lmTrades, isLoading: isLoadingLmTrades, error: errorLmTrades } = useSelector(state => state.lmTrades);
@@ -22,35 +25,34 @@ const View = ({ }) => {
     useEffect(() => {
         dispatch(fetchFilteredData(type1, type2, leagues, leaguemates, playerShares));
 
-       
+
 
     }, [user, leagues, type1, type2, leaguemates, playerShares])
 
+    useEffect(() => {
+        if (user.user_id && Object.keys(leaguematesDict)?.length > 0) {
+            dispatch(fetchLmTrades(user.user_id, leaguematesDict, leaguemates, leagues, state.season, 0, 125))
+        }
+    }, [user.user_id, leaguematesDict])
 
-   
-
-    console.log([tab, type1, type2])
     let display;
+
 
     switch (tab) {
         case 'Players':
-            display = <Players />
+            display = !isLoading && <Players /> || loadingIcon
             break;
         case 'Leaguemates':
-            display = <Leaguemates
-                stateLeaguemates={leaguematesFiltered}
-            />
+            display = !isLoading && <Leaguemates /> || loadingIcon
             break;
         case 'Leagues':
-            display = <Leagues
-                stateLeagues={leaguesFiltered}
-            />
+            display = !isLoading && <Leagues /> || loadingIcon
             break;
         case 'Trades':
-            display = <Trades />
+            display = !isLoadingLmTrades && <Trades /> || loadingIcon
             break;
         case 'Lineups':
-            display = <Lineups />
+            display = !isLoading && <Lineups /> || loadingIcon
             break;
         default:
             display = null

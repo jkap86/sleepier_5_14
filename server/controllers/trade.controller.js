@@ -16,24 +16,31 @@ exports.leaguemate = async (req, res) => {
                 [Op.contains]: [req.body.manager]
             }
         })
-    } 
+    } else if (req.body.leaguemates) {
+        filters.push({
+            managers: {
+                [Op.overlap]: req.body.leaguemates
+            }
+        })
+
+    }
 
     if (req.body.player) {
         if (req.body.player.includes('.')) {
             const pick_split = req.body.player.split(' ')
             const season = pick_split[0]
             const round = parseInt(pick_split[1]?.split('.')[0])
-            const order = parseInt(pick_split[1]?.split('.')[1])
+            const order = parseInt(season) === parseInt(new Date().getFullYear()) ? parseInt(pick_split[1]?.split('.')[1]) : null
 
             filters.push({
-                price_check: {
+                players: {
                     [Op.contains]: [`${season} ${round}.${order}`]
                 }
 
             })
         } else {
             filters.push({
-                price_check: {
+                players: {
                     [Op.contains]: [req.body.player]
                 }
 
@@ -41,9 +48,10 @@ exports.leaguemate = async (req, res) => {
         }
     }
 
-    
     let lmTrades;
+    let leagues;
     try {
+
         lmTrades = await Trade.findAndCountAll({
             order: [['status_updated', 'DESC']],
             offset: req.body.offset,
@@ -51,21 +59,21 @@ exports.leaguemate = async (req, res) => {
             where: {
                 [Op.and]: filters
             },
-            through: {
-                model: sequelize.model('usertrades'), attributes: [], where: {
-                    userUserId: req.body.user_id
+            attributes: ['transaction_id', 'status_updated', 'rosters', 'managers', 'adds', 'drops', 'draft_picks', 'leagueLeagueId'],
+            include: [
+                {
+                    model: League,
+                    attributes: ['name', 'avatar', 'roster_positions', 'scoring_settings', 'settings'],
+
                 }
-            },
-
-
-
-            raw: true,
-            distinct: true
+            ],
+            subquery: true,
+            raw: true
         })
-
-    } catch (err) {
-        console.log(err)
+    } catch (error) {
+        console.log(error)
     }
+
     res.send(lmTrades)
 
 }
