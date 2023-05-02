@@ -67,7 +67,6 @@ exports.leaguemate = async (req, res) => {
 
                 }
             ],
-            subquery: true,
             raw: true
         })
     } catch (error) {

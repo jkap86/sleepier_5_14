@@ -30,7 +30,10 @@ module.exports = (sequelize, Sequelize, user_league) => {
         },
         drafts: {
             type: Sequelize.JSONB
-        }
+        },
+        ...Object.fromEntries(Array.from(Array(18).keys()).map(key => {
+            return [`matchups_${key + 1}`, { type: Sequelize.JSONB }]
+        }))
     }, {
         indexes: [
             {

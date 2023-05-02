@@ -66,12 +66,12 @@ exports.find = async (req, res) => {
 
     const [leagues_to_add, leagues_to_update, leagues_up_to_date] = await getLeaguesToUpsert(req.body.user_id, league_ids)
 
-    
+
     let new_leagues = await getBatchLeaguesDetails(leagues_to_add)
     let updated_leagues = await getBatchLeaguesDetails(leagues_to_update)
 
     console.log({
-        new_leagues:new_leagues,
+        new_leagues: new_leagues,
         updated_leagues: updated_leagues
     })
 
@@ -180,7 +180,7 @@ const getLeagueDetails = async (league_id) => {
         const drafts_array = []
 
         for (const draft of drafts.data) {
-           drafts_array.push( {
+            drafts_array.push({
                 draft_id: draft.draft_id,
                 status: draft.status,
                 rounds: draft.settings.rounds,
@@ -244,22 +244,22 @@ const getLeagueDetails = async (league_id) => {
 }
 
 const getBatchLeaguesDetails = async (leagueIds) => {
-    console.log({leagueIds: leagueIds})
+    console.log({ leagueIds: leagueIds })
     const allResults = [];
-  
+
     const chunkSize = 50;
-  
+
     for (let i = 0; i < leagueIds.length; i += chunkSize) {
-      const chunk = leagueIds.slice(i, i + chunkSize);
-      const chunkResults = await Promise.all(chunk.map(async (leagueId) => {
-        const result = await getLeagueDetails(leagueId);
-        return result !== null ? result : undefined;
-      }));
-      allResults.push(...chunkResults);
+        const chunk = leagueIds.slice(i, i + chunkSize);
+        const chunkResults = await Promise.all(chunk.map(async (leagueId) => {
+            const result = await getLeagueDetails(leagueId);
+            return result !== null ? result : undefined;
+        }));
+        allResults.push(...chunkResults);
     }
-  
+
     return allResults.filter(result => result !== undefined);
-  }
+}
 
 const getLeaguesToUpsert = async (user_id, league_ids) => {
     let user;
@@ -278,8 +278,8 @@ const getLeaguesToUpsert = async (user_id, league_ids) => {
 
     const now = new Date()
     const cutoff = new Date(new Date() - (24 * 60 * 60 * 1000))
-   
-    
+
+
 
     const leagues_to_add = league_ids
         .filter(l =>

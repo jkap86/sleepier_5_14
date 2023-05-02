@@ -39,14 +39,15 @@ module.exports = (sequelize, Sequelize) => {
     }, {
         indexes: [
             {
-                fields: ['status_updated'],
+                fields: ['status_updated', 'leagueLeagueId', 'managers'],
                 using: 'BTREE',
                 order: [['status_updated', 'DESC']]
-
-
             }
         ]
     });
+
+
+
 
     return Trade;
 };
