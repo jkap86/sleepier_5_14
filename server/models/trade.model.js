@@ -43,7 +43,15 @@ module.exports = (sequelize, Sequelize) => {
                 using: 'BTREE',
                 order: [['status_updated', 'DESC']]
             }
-        ]
+        ],
+        partitionKey: 'status_updated',
+        partitionOptions: {
+            type: 'range',
+            key: 'status_updated',
+            partitionBy: 'MONTH',
+            partitionCount: 6
+        }
+
     });
 
 
