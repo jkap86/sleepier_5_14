@@ -19,7 +19,8 @@ const Players = ({ }) => {
     const [filterTeam, setFilterTeam] = useState('All')
     const [valueType, setValueType] = useState('SF')
     const [optionsVisible, setOptionsVisible] = useState(false)
-    const [snapPercentage, setSnapPercentage] = useState(0)
+    const [snapPercentageMin, setSnapPercentageMin] = useState(0)
+    const [snapPercentageMax, setSnapPercentageMax] = useState(100)
 
     const { user, isLoading: isLoadingUser, error: errorUser } = useSelector((state) => state.user);
     const { state, allPlayers, nflSchedule, leagues, leaguemates, leaguematesDict, playerShares, isLoading: isLoadingLeagues, error: errorLeagues } = useSelector(state => state.leagues)
@@ -164,7 +165,13 @@ const Players = ({ }) => {
             }
 
             const trend_games = stats?.[player.id]
-                ?.filter(s => s.stats.tm_off_snp > 0 && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) > snapPercentage))
+                ?.filter(
+                    s =>
+                        s.stats.tm_off_snp > 0
+                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) > snapPercentageMin)
+                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) < snapPercentageMax)
+
+                )
 
 
             return {
@@ -224,7 +231,7 @@ const Players = ({ }) => {
                         leagues_taken={player.leagues_taken}
                         leagues_available={player.leagues_available}
                         stateStats={stats}
-                        snapPercentage={snapPercentage}
+                        trend_games={trend_games}
                         player_id={player.id}
                         allPlayers={allPlayers}
                     />
@@ -281,7 +288,10 @@ const Players = ({ }) => {
                                 <strong>Snap %</strong>
                             </div>
                             <div className="modal-grid-content two">
-                                Min <input type={'number'} defaultValue={snapPercentage} onBlur={(e) => setSnapPercentage(e.target.value)} />
+                                Min <input type={'number'} defaultValue={snapPercentageMin} onBlur={(e) => setSnapPercentageMin(e.target.value)} />
+                            </div>
+                            <div className="modal-grid-content three">
+                                Min <input type={'number'} defaultValue={snapPercentageMax} onBlur={(e) => setSnapPercentageMax(e.target.value)} />
                             </div>
                         </div>
                     </div>

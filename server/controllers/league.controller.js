@@ -67,20 +67,20 @@ exports.find = async (req, res) => {
     const [leagues_to_add, leagues_to_update, leagues_up_to_date] = await getLeaguesToUpsert(req.body.user_id, league_ids)
 
 
-    let new_leagues = await getBatchLeaguesDetails(leagues_to_add)
-    let updated_leagues = await getBatchLeaguesDetails(leagues_to_update)
+    let new_leagues = await getBatchLeaguesDetails(leagues_to_add, state.display_week)
+    let updated_leagues = await getBatchLeaguesDetails(leagues_to_update, state.display_week)
 
-    console.log({
-        new_leagues: new_leagues,
-        updated_leagues: updated_leagues
-    })
 
     try {
-        const week = state.season_type === 'regular' ? state.week : 1
+        const keys = ["name", "avatar", "settings", "scoring_settings", "roster_positions",
+            "rosters", "drafts", "updatedAt"]
+
+        if (state.display_week > 0 && state.display_week < 19) {
+            keys.push(`matchups_${state.display_week}`)
+        }
 
         await League.bulkCreate([...new_leagues, ...updated_leagues].flat(), {
-            updateOnDuplicate: ["name", "avatar", "settings", "scoring_settings", "roster_positions",
-                "rosters", "drafts", "updatedAt"]
+            updateOnDuplicate: keys
         })
     } catch (error) {
         console.log(error)
@@ -166,7 +166,7 @@ const getDraftPicks = (traded_picks, rosters, users, drafts, league) => {
     return original_picks
 }
 
-const getLeagueDetails = async (league_id) => {
+const getLeagueDetails = async (league_id, display_week) => {
     try {
         const league = await axios.get(`https://api.sleeper.app/v1/league/${league_id}`)
         const users = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/users`)
@@ -174,6 +174,11 @@ const getLeagueDetails = async (league_id) => {
         const drafts = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/drafts`)
         const traded_picks = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/traded_picks`)
 
+        let matchups = {};
+        if (display_week > 0 && display_week < 19) {
+            const matchup_week = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/matchups/${display_week}`)
+            matchups[`matchups_${display_week}`] = matchup_week.data
+        }
 
         const draft_picks = getDraftPicks(traded_picks.data, rosters.data, users.data, drafts.data, league.data)
 
@@ -235,6 +240,7 @@ const getLeagueDetails = async (league_id) => {
             roster_positions: league.data.roster_positions,
             rosters: rosters_username,
             drafts: drafts_array,
+            ...matchups,
             updatedAt: Date.now()
         }
     } catch (error) {
@@ -243,8 +249,8 @@ const getLeagueDetails = async (league_id) => {
     }
 }
 
-const getBatchLeaguesDetails = async (leagueIds) => {
-    console.log({ leagueIds: leagueIds })
+const getBatchLeaguesDetails = async (leagueIds, display_week) => {
+
     const allResults = [];
 
     const chunkSize = 50;
@@ -252,7 +258,7 @@ const getBatchLeaguesDetails = async (leagueIds) => {
     for (let i = 0; i < leagueIds.length; i += chunkSize) {
         const chunk = leagueIds.slice(i, i + chunkSize);
         const chunkResults = await Promise.all(chunk.map(async (leagueId) => {
-            const result = await getLeagueDetails(leagueId);
+            const result = await getLeagueDetails(leagueId, display_week);
             return result !== null ? result : undefined;
         }));
         allResults.push(...chunkResults);

@@ -3,7 +3,7 @@ import { useState } from "react";
 import LeagueInfo from "../Leagues/leagueInfo";
 import { useSelector } from 'react-redux';
 
-const PlayerLeagues = ({ leagues_owned, leagues_taken, leagues_available, player_id, snapPercentage }) => {
+const PlayerLeagues = ({ leagues_owned, leagues_taken, leagues_available, player_id, trend_games }) => {
     const [tab, setTab] = useState('Owned');
     const [page, setPage] = useState(1)
     const [itemActive, setItemActive] = useState('');
@@ -56,8 +56,7 @@ const PlayerLeagues = ({ leagues_owned, leagues_taken, leagues_available, player
         )
     }
 
-    const trend_games = stateStats?.[player_id]
-        ?.filter(s => s.stats.tm_off_snp > 0 && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) > snapPercentage))
+
 
     const leagues_display = tab === 'Owned' ? leagues_owned :
         tab === 'Taken' ? leagues_taken :
@@ -111,7 +110,7 @@ const PlayerLeagues = ({ leagues_owned, leagues_taken, leagues_available, player
                     league={lo}
                     stateStats={stateStats}
                     getPlayerScore={getPlayerScore}
-                    snapPercentage={snapPercentage}
+                    trend_games={trend_games}
                     type='tertiary'
 
                 />

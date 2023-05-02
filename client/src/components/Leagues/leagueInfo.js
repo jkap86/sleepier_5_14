@@ -8,7 +8,7 @@ const LeagueInfo = ({
     league,
     scoring_settings,
     getPlayerScore,
-    snapPercentage,
+    trend_games,
     type
 }) => {
     const { stats: stateStats } = useSelector(state => state.stats);
@@ -127,8 +127,7 @@ const LeagueInfo = ({
         })
 
     const players_body = display.map((starter, index) => {
-        const trend_games = stateStats?.[starter]
-            ?.filter(s => s.stats.tm_off_snp > 0 && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) > snapPercentage))
+
         const player_score = getPlayerScore && getPlayerScore(trend_games, scoring_settings)
         return {
             id: starter,
