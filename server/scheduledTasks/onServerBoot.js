@@ -14,18 +14,21 @@ module.exports = async (app) => {
             try {
                 sleeper_players = await axios.get('https://api.sleeper.app/v1/players/nfl')
                 sleeper_players = sleeper_players.data
-    
+
             } catch (error) {
                 console.log(error)
             }
         } else {
             console.log('getting allplayers from file...')
-    
+
             sleeper_players = ALLPLAYERS
         }
-    
-    
-        return sleeper_players
+
+        const active_players = Object.fromEntries(
+            Object.entries(sleeper_players).filter(([key, value]) => value.active && ['QB', 'RB', 'FB', 'WR', 'TE'].includes(value.position))
+        );
+
+        return active_players
     }
 
     let delay;
@@ -76,6 +79,6 @@ module.exports = async (app) => {
     console.log('Server Boot Complete...')
     return
 
-    
+
 }
 
