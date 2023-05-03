@@ -55,16 +55,22 @@ export const importRankings = (e, stateAllPlayers, setUploadedRankings) => {
             */
             const data = e.target.result
             const workbook = read(data, { type: 'array' })
-            const sheetName = workbook.SheetNames[0]
-            const worksheet = workbook.Sheets[sheetName]
-            let json = utils.sheet_to_json(worksheet)
 
-            const cols = Object.keys(json[0])
-            const p = cols.find(x => ['player', 'name', 'player name'].includes(x.trim().toLowerCase()))
-            const r = cols.find(x => ['rank', 'rk', 'overall'].includes(x.trim().toLowerCase()))
-            const pos = cols.find(x => ['pos', 'position'].includes(x.trim().toLowerCase()))
-            const team = cols.find(x => ['team', 'tm'].includes(x.trim().toLowerCase()))
+            let json, p, r, pos, team;
+            let i = 0
+            while (!(p && r && pos) && i < 3) {
+                const sheetName = workbook.SheetNames[i]
+                const worksheet = workbook.Sheets[sheetName]
+                json = utils.sheet_to_json(worksheet)
 
+                const cols = Object.keys(json[0])
+                p = cols.find(x => ['player', 'name', 'player name'].includes(x.trim().toLowerCase()))
+                r = cols.find(x => ['rank', 'rk', 'overall'].includes(x.trim().toLowerCase()))
+                pos = cols.find(x => ['pos', 'position'].includes(x.trim().toLowerCase()))
+                team = cols.find(x => ['team', 'tm'].includes(x.trim().toLowerCase()))
+
+                i++
+            }
             if (!(p && r && pos)) {
                 setUploadedRankings({ error: `error - column ${!p ? ' Player' : ''} ${!r ? ' Rank' : ''} ${!pos ? ' Position' : ''} ${!team ? ' Team' : ''} not found` })
                 return

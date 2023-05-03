@@ -1,10 +1,10 @@
 module.exports = async (app) => {
     const db = require('../models');
     const User = db.users;
-    const League =db.leagues;
+    const League = db.leagues;
     const Sequelize = db.Sequelize;
 
-
+    const getTopUsers = async () => {
         try {
             const users = await User.findAll({
                 attributes: [
@@ -28,8 +28,11 @@ module.exports = async (app) => {
         } catch (err) {
             console.log(err)
         }
-    
+    }
 
+    setTimeout(() => {
+        getTopUsers()
+    }, 5000)
 
     setInterval(() => {
         getTopUsers()

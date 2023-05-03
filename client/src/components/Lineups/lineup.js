@@ -2,7 +2,8 @@ import TableMain from "../Home/tableMain";
 import { useState, useEffect } from "react";
 import tumbleweedgif from '../../images/tumbleweed.gif';
 import { matchTeam } from "../Functions/misc";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { syncLeague } from '../../actions/actions';
 
 const Lineup = ({
     matchup,
@@ -13,12 +14,12 @@ const Lineup = ({
     stateAllPlayers,
     state_user,
     lineup_check,
-    syncLeague,
     players_points,
     uploadedRankings,
     stateState,
     stateNflSchedule
 }) => {
+    const dispatch = useDispatch()
     const [itemActive, setItemActive] = useState(null);
     const [syncing, setSyncing] = useState(false)
     const [secondaryContent, setSecondaryContent] = useState('Optimal')
@@ -328,7 +329,7 @@ const Lineup = ({
             </div>
             <button
                 className={`sync ${syncing ? '' : 'click'}`}
-                onClick={syncing ? null : () => handleSync(league.league_id, state_user.user_id)}
+                onClick={syncing ? null : () => dispatch(syncLeague(league.league_id, stateState.display_week))}
             >
                 <i className={`fa-solid fa-arrows-rotate ${syncing ? 'rotate' : ''}`}></i>
             </button>

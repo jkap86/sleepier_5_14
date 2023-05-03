@@ -3,6 +3,7 @@ import { RESET_STATE } from '../actions/actions';
 
 const initialState = {
     isLoading: false,
+    syncing: false,
     state: {},
     allPlayers: {},
     nflSchedule: {},
@@ -32,6 +33,25 @@ const leaguesReducer = (state = initialState, action) => {
             };
         case 'FETCH_LEAGUES_FAILURE':
             return { ...state, isLoading: false, error: action.payload };
+        case 'SYNC_LEAGUES_START':
+            return { ...state, syncing: true, errorSyncing: null };
+        case 'SYNC_LEAGUES_SUCCESS':
+            const updated_leagues = state.leagues.map(l => {
+                if (l.league_id === action.payload.league_id) {
+                    return {
+                        ...l,
+                        [`matchups_${action.payload.week}`]: action.payload.matchups_new
+                    }
+                }
+                return l
+            })
+            return {
+                ...state,
+                leagues: updated_leagues,
+                syncing: false
+            }
+        case 'SYNC_LEAGUES_FAILURE':
+            return { ...state, syncing: false, errorSyncing: action.payload }
         case RESET_STATE:
             return {
                 ...initialState

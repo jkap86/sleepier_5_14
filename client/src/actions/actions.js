@@ -61,6 +61,31 @@ export const fetchLeagues = (user_id) => {
     };
 };
 
+export const syncLeague = (league_id, week) => {
+    return async (dispatch) => {
+        dispatch({ type: 'SYNC_LEAGUE_START' })
+
+        try {
+            const matchups_new = await axios.post(`/league/sync`, {
+                league_id: league_id,
+                week: week
+            })
+
+            dispatch({
+                type: 'SYNC_LEAGUES_SUCCESS', payload: {
+                    league_id: league_id,
+                    week: week,
+                    matchups_new: matchups_new.data
+                }
+            })
+        } catch (error) {
+            console.log(error)
+            dispatch({ type: 'SYNC_LEAGUES_FAILURE' })
+        }
+
+    };
+}
+
 export const fetchLmTrades = (user_id, leaguematesDict, leaguemates, leagues, season, offset, limit) => {
     return async (dispatch) => {
         dispatch({ type: 'FETCH_LMTRADES_START' });
