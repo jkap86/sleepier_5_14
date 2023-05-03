@@ -31,7 +31,7 @@ const View = ({ }) => {
 
     useEffect(() => {
         if (user.user_id && Object.keys(leaguematesDict)?.length > 0) {
-            dispatch(fetchLmTrades(user.user_id, leaguematesDict, leaguemates, leagues, state.season, 0, 125))
+            dispatch(fetchLmTrades(user.user_id, leaguematesDict, leagues, state.season, 0, 125))
         }
     }, [user.user_id, leaguematesDict])
 

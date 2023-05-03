@@ -86,7 +86,7 @@ export const syncLeague = (league_id, week) => {
     };
 }
 
-export const fetchLmTrades = (user_id, leaguematesDict, leaguemates, leagues, season, offset, limit) => {
+export const fetchLmTrades = (user_id, leaguematesDict, leagues, season, offset, limit) => {
     return async (dispatch) => {
         dispatch({ type: 'FETCH_LMTRADES_START' });
 
@@ -98,7 +98,7 @@ export const fetchLmTrades = (user_id, leaguematesDict, leaguemates, leagues, se
                 limit: limit
             })
 
-            const trades_tips = getTradeTips(trades.data.rows, leagues, leaguemates, season)
+            const trades_tips = getTradeTips(trades.data.rows, leagues, leaguematesDict, season)
 
             dispatch({
                 type: 'FETCH_LMTRADES_SUCCESS', payload: {
