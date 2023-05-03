@@ -25,7 +25,7 @@ module.exports = async (app) => {
         }
 
         const active_players = Object.fromEntries(
-            Object.entries(sleeper_players).filter(([key, value]) => value.active && ['QB', 'RB', 'FB', 'WR', 'TE'].includes(value.position))
+            Object.entries(sleeper_players).filter(([key, value]) => value.active && ['QB', 'RB', 'FB', 'WR', 'TE', 'K'].includes(value.position))
         );
 
         return active_players
