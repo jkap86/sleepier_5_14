@@ -2,6 +2,7 @@ span.team {
     display: inline-flex;
     vertical-align: top;
     width: fit-content;
+    margin: 0 1rem;
 }
 
 .hidden_behind {
@@ -90,5 +91,10 @@ div.position_square1>div.picks {
 }
 
 .icon {
-    width: 7rem
+    width: 7rem;
+    font-size: 5rem;
+}
+
+strong.draft-year {
+    font-size: 3.5rem;
 }

@@ -446,3 +446,7 @@ td.value {
     color: var(--wr);
     text-align: center;
 }
+
+i.fa-filter {
+    color: var(--color2);
+}

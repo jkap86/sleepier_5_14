@@ -192,6 +192,12 @@ select {
   appearance: none;
 }
 
+select>option {
+  font-weight: 900;
+  color: black;
+
+}
+
 div {
   box-sizing: border-box;
 }

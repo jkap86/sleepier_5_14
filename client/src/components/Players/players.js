@@ -17,11 +17,12 @@ const Players = ({ }) => {
     const [searched, setSearched] = useState('')
     const [filterPosition, setFilterPosition] = useState('W/R/T/Q')
     const [filterTeam, setFilterTeam] = useState('All')
+    const [filterDraftClass, setFilterDraftClass] = useState('All')
     const [valueType, setValueType] = useState('SF')
     const [optionsVisible, setOptionsVisible] = useState(false)
     const [snapPercentageMin, setSnapPercentageMin] = useState(0)
     const [snapPercentageMax, setSnapPercentageMax] = useState(100)
-
+    const [sortBy, setSortBy] = useState('Owned')
     const { user, isLoading: isLoadingUser, error: errorUser } = useSelector((state) => state.user);
     const { state, allPlayers, nflSchedule, leagues, leaguemates, leaguematesDict, playerShares, isLoading: isLoadingLeagues, error: errorLeagues } = useSelector(state => state.leagues)
     const { lmTrades, isLoading: isLoadingLmTrades, error: errorLmTrades } = useSelector(state => state.lmTrades);
@@ -30,7 +31,7 @@ const Players = ({ }) => {
     const { isLoading: isLoadingStats, stats, error: errorStats } = useSelector(state => state.stats)
     const { isLoading: isLoadingDynastyValues, dynastyValues, error: errorDynstyValues } = useSelector(state => state.dynastyValues)
 
-    console.log(dynastyValues)
+
 
     useEffect(() => {
 
@@ -70,7 +71,12 @@ const Players = ({ }) => {
 
             {
                 text: <>
-                    {`${trendDateStart} to ${trendDateEnd}`}
+                    {
+                        `${new Date(new Date(trendDateStart).getTime() + new Date().getTimezoneOffset() * 60000).toLocaleDateString('en-US', { year: '2-digit', month: 'numeric', day: 'numeric' })}
+                     to
+                        ${new Date(new Date(trendDateEnd).getTime() + new Date().getTimezoneOffset() * 60000).toLocaleDateString('en-US', { year: '2-digit', month: 'numeric', day: 'numeric' })}`
+                    }
+                    &nbsp;
                     <i
                         className="fa-solid fa-filter fa-beat"
                         onClick={() => setOptionsVisible(prevState => !prevState)}
@@ -126,9 +132,10 @@ const Players = ({ }) => {
                 )
             ) && (
                 filterTeam === 'All' || allPlayers[x.id]?.team === filterTeam
+            ) && (
+                filterDraftClass === 'All' || parseInt(filterDraftClass) === (state.league_season - allPlayers[parseInt(x.id)]?.years_exp)
             )
         )
-        .sort((a, b) => b.leagues_owned.length - a.leagues_owned.length)
         .map(player => {
             let pick_name;
             let ktc_name;
@@ -168,8 +175,8 @@ const Players = ({ }) => {
                 ?.filter(
                     s =>
                         s.stats.tm_off_snp > 0
-                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) > snapPercentageMin)
-                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) < snapPercentageMax)
+                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 > snapPercentageMin)
+                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 < snapPercentageMax)
 
                 )
 
@@ -238,12 +245,66 @@ const Players = ({ }) => {
                 )
             }
         })
+        .sort(
+            (a, b) => sortBy === 'KTC'
+                ? (parseInt(b.list[3].text) || 0) - (parseInt(a.list[3].text) || 0)
+                : sortBy === 'TREND'
+                    ? (parseInt(b.list[4].text) || 0) - (parseInt(a.list[4].text) || 0)
+                    : sortBy === 'GP'
+                        ? (parseInt(b.list[5].text) || 0) - (parseInt(a.list[5].text) || 0)
+                        : sortBy === 'PPG'
+                            ? (parseFloat(b.list[6].text) || 0) - (parseFloat(a.list[6].text) || 0)
+                            : (parseInt(b.list[1].text) || 0) - (parseInt(a.list[1].text) || 0)
+
+        )
 
     useEffect(() => {
         if (filterPosition === 'Picks') {
             setFilterTeam('All')
         }
     }, [filterPosition])
+
+
+
+    const handleMaxMinChange = (type, value) => {
+
+        switch (type) {
+            case 'minsnappct':
+                snapPercentageMin > snapPercentageMax && setSnapPercentageMax(value)
+                break;
+            case 'maxsnappct':
+                snapPercentageMin > snapPercentageMax && setSnapPercentageMin(value)
+                break;
+            case 'mintrend':
+                trendDateStart > trendDateEnd && dispatch(setTrendDateEnd(value))
+                break;
+            case 'maxtrend':
+                trendDateStart > trendDateEnd && dispatch(setTrendDateStart(value))
+                break;
+            default:
+                break
+        }
+    }
+
+    const stat_categories = Array.from(
+        new Set(leaguesFiltered
+            .flatMap(league =>
+                Object.keys(league.scoring_settings || {})
+                    .filter(
+                        setting => (
+                            setting.startsWith('pass')
+                            || setting.startsWith('rush')
+                            || setting.startsWith('rec')
+                            || setting.startsWith('bonus')
+                            || setting.startsWith('fum ')
+                        ) && (
+                                league.scoring_settings[setting] > 0
+                            )
+                    )
+            )
+        )
+    )
+
 
     const teamFilter = <TeamFilter
         filterTeam={filterTeam}
@@ -257,24 +318,85 @@ const Players = ({ }) => {
         picks={true}
     />
 
+    const player_ids = playersharesFiltered.filter(p => parseInt(allPlayers[parseInt(p.id)]?.years_exp) >= 0).map(p => parseInt(p.id))
+
+    const draftClassYears = Array.from(
+        new Set(
+            player_ids
+                .map(player_id => state.league_season - allPlayers[parseInt(player_id)]?.years_exp)
+        )
+    ).sort((a, b) => b - a)
+
+
+    const draftClassFilter = <span className="team">
+        <label>
+            {
+                filterDraftClass === 'All' ?
+                    <i className="fa-solid fa-graduation-cap icon"></i>
+                    : <strong className="draft-year"><em>{filterDraftClass}</em></strong>
+            }
+            <select
+                className="hidden_behind click"
+                onChange={(e) => setFilterDraftClass(e.target.value)}
+                value={filterDraftClass}
+            >
+                <option>All</option>
+                {
+                    draftClassYears.map(year =>
+                        <option>{year}</option>
+                    )
+                }
+
+            </select>
+        </label>
+
+    </span>
 
     return <>
         {
             optionsVisible ?
                 <div className="modal">
                     <div className="modal-grid">
-                        <button className="close" onClick={() => setOptionsVisible(false)}>Close</button>
+                        <label className="sort">
+                            <i class="fa-solid fa-sort"></i>
+                            <select
+                                className="hidden_behind click"
+                                onChange={(e) => setSortBy(e.target.value)}
+                                value={sortBy}
+                            >
+                                <option>OWNED</option>
+                                <option>KTC</option>
+                                <option>TREND</option>
+                                <option>GP</option>
+                                <option>PPG</option>
+                            </select>
+                        </label>
+                        <button className="close" onClick={() => setOptionsVisible(false)}>X</button>
                         <div className="modal-grid-item">
                             <div className="modal-grid-content header"><strong>Trend Range</strong>
                             </div>
                             <div className="modal-grid-content one">
 
-                                <input type={'date'} defaultValue={trendDateStart} onBlur={(e) => e.target.value && dispatch(setTrendDateStart(new Date(e.target.value).toISOString().split('T')[0]))} />
+                                <input
+                                    type={'date'}
+                                    value={trendDateStart}
+                                    onChange={(e) => e.target.value && dispatch(setTrendDateStart(new Date(e.target.value).toISOString().split('T')[0]))}
+                                    onBlur={(e) => handleMaxMinChange('mintrend', e.target.value)}
+                                    onMouseLeave={(e) => handleMaxMinChange('mintrend', e.target.value)}
+                                    onMouseEnter={(e) => handleMaxMinChange('maxtrend', e.target.value)}
+                                />
 
                             </div>
                             <div className="modal-grid-content three">
 
-                                <input type={'date'} defaultValue={trendDateEnd} onBlur={(e) => e.target.value && dispatch(setTrendDateEnd(new Date(e.target.value).toISOString().split('T')[0]))} />
+                                <input
+                                    type={'date'}
+                                    value={trendDateEnd}
+                                    onChange={(e) => e.target.value && dispatch(setTrendDateEnd(new Date(e.target.value).toISOString().split('T')[0]))}
+                                    onBlur={(e) => handleMaxMinChange('maxtrend', e.target.value)}
+                                    onMouseLeave={(e) => handleMaxMinChange('maxtrend', e.target.value)}
+                                    onMouseEnter={(e) => handleMaxMinChange('mintrend', e.target.value)}
+                                />
 
                             </div>
                         </div>
@@ -288,17 +410,37 @@ const Players = ({ }) => {
                                 <strong>Snap %</strong>
                             </div>
                             <div className="modal-grid-content two">
-                                Min <input type={'number'} defaultValue={snapPercentageMin} onBlur={(e) => setSnapPercentageMin(e.target.value)} />
+                                Min <input
+                                    type={'number'}
+                                    min={'0'}
+                                    max={'100'}
+                                    value={snapPercentageMin}
+                                    onChange={(e) => setSnapPercentageMin(e.target.value)}
+                                    onBlur={(e) => handleMaxMinChange('minsnappct', e.target.value)}
+                                    onMouseLeave={(e) => handleMaxMinChange('minsnappct', e.target.value)}
+                                    onMouseEnter={(e) => handleMaxMinChange('maxsnappct', e.target.value)}
+                                /> %
                             </div>
                             <div className="modal-grid-content three">
-                                Min <input type={'number'} defaultValue={snapPercentageMax} onBlur={(e) => setSnapPercentageMax(e.target.value)} />
+                                Min <input
+                                    type={'number'}
+                                    min={'0'}
+                                    max={'100'}
+                                    value={snapPercentageMax}
+                                    onChange={(e) => setSnapPercentageMax(e.target.value)}
+                                    onBlur={(e) => handleMaxMinChange('maxsnappct', e.target.value)}
+                                    onMouseLeave={(e) => handleMaxMinChange('maxsnappct', e.target.value)}
+                                    onMouseEnter={(e) => handleMaxMinChange('minsnappct', e.target.value)}
+                                /> %
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
                 :
                 null
         }
+
+
 
         <TableMain
             id={'Players'}
@@ -313,7 +455,7 @@ const Players = ({ }) => {
             searched={searched}
             setSearched={setSearched}
             options1={[teamFilter]}
-            options2={[positionFilter]}
+            options2={[positionFilter, draftClassFilter]}
         />
     </>
 }
