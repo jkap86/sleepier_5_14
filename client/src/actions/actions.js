@@ -199,7 +199,7 @@ export const fetchFilteredData = (type1, type2, leagues, leaguemates, playerShar
     }
 };
 
-export const fetchStats = (trendDateStart, trendDateEnd, players) => async (dispatch) => {
+export const fetchStats = (trendDateStart, trendDateEnd, players, league) => async (dispatch) => {
     dispatch({ type: 'FETCH_STATS_START' })
     console.log('getting stats')
     try {
@@ -211,7 +211,7 @@ export const fetchStats = (trendDateStart, trendDateEnd, players) => async (disp
 
         console.log(stats.data)
 
-        dispatch({ type: 'FETCH_STATS_SUCCESS', payload: stats.data })
+        dispatch({ type: 'FETCH_STATS_SUCCESS', payload: { ...stats.data, league: league } })
     } catch (error) {
         dispatch({ type: 'FETCH_STATS_FAILURE', payload: error.message })
     }

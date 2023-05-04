@@ -1,21 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TableMain from "../Home/tableMain";
 import { days, default_scoring_settings, scoring_settings_display } from '../Functions/misc';
 import { Link } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchStats } from "../../actions/actions";
 
 const LeagueInfo = ({
     league,
     scoring_settings,
     getPlayerScore,
-    trend_games,
-    type
+    type,
+    snapPercentageMin,
+    snapPercentageMax
 }) => {
-    const { stats: stateStats } = useSelector(state => state.stats);
+    const dispatch = useDispatch();
+    const { teamStats: stateStats } = useSelector(state => state.stats);
     const { state: stateState, allPlayers: stateAllPlayers, nflSchedule, leagues, leaguemates, leaguematesDict, playerShares, isLoading: isLoadingLeagues, error: errorLeagues } = useSelector(state => state.leagues)
+    const { tab, trendDateStart, trendDateEnd } = useSelector(state => state.tab);
     const [itemActive, setItemActive] = useState('');
     const [secondaryContent, setSecondaryContent] = useState('Lineup')
 
+    console.log(stateStats)
+    useEffect(() => {
+        const roster = league.rosters.find(x => x.roster_id === itemActive)
+        if (roster) {
+            dispatch(fetchStats(trendDateStart, trendDateEnd, roster?.players, true))
+        }
+    }, [dispatch, itemActive])
 
     const active_roster = league.rosters.find(x => x.roster_id === itemActive)
 
@@ -128,7 +139,18 @@ const LeagueInfo = ({
 
     const players_body = display.map((starter, index) => {
 
+        const trend_games = stateStats?.[starter]
+            ?.filter(
+                s =>
+                    s.stats.tm_off_snp > 0
+                    && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 >= snapPercentageMin)
+                    && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 <= snapPercentageMax)
+
+            )
         const player_score = getPlayerScore && getPlayerScore(trend_games, scoring_settings)
+
+
+
         return {
             id: starter,
             list: [

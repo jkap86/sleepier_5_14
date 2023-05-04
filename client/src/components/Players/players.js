@@ -48,10 +48,24 @@ const Players = ({ }) => {
     const playerShares_headers = [
         [
             {
-                text: 'Player',
+                text: <> <label className="sort">
+                    <i class="fa-solid fa-beat fa-sort"></i>
+                    <select
+                        className="hidden_behind click"
+                        onChange={(e) => setSortBy(e.target.value)}
+                        value={sortBy}
+                    >
+                        <option>OWNED</option>
+                        <option>KTC</option>
+                        <option>TREND</option>
+                        <option>GP</option>
+                        <option>PPG</option>
+                    </select>
+                </label>Player</>,
                 colSpan: 4,
                 rowSpan: 2,
                 className: 'half'
+
             },
 
             {
@@ -79,13 +93,14 @@ const Players = ({ }) => {
                     &nbsp;
                     <i
                         className="fa-solid fa-filter fa-beat"
-                        onClick={() => setOptionsVisible(prevState => !prevState)}
+
                     >
 
                     </i>
                 </>,
                 colSpan: 3,
-                className: 'xsmall'
+                className: 'small left',
+                onClick: () => setOptionsVisible(prevState => !prevState)
             }
         ],
         [
@@ -175,8 +190,8 @@ const Players = ({ }) => {
                 ?.filter(
                     s =>
                         s.stats.tm_off_snp > 0
-                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 > snapPercentageMin)
-                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 < snapPercentageMax)
+                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 >= snapPercentageMin)
+                        && ((s.stats.snp || s.stats.off_snp || 0) / (s.stats.tm_off_snp) * 100 <= snapPercentageMax)
 
                 )
 
@@ -239,6 +254,8 @@ const Players = ({ }) => {
                         leagues_available={player.leagues_available}
                         stateStats={stats}
                         trend_games={trend_games}
+                        snapPercentageMin={snapPercentageMin}
+                        snapPercentageMax={snapPercentageMax}
                         player_id={player.id}
                         allPlayers={allPlayers}
                     />
@@ -357,20 +374,6 @@ const Players = ({ }) => {
             optionsVisible ?
                 <div className="modal">
                     <div className="modal-grid">
-                        <label className="sort">
-                            <i class="fa-solid fa-sort"></i>
-                            <select
-                                className="hidden_behind click"
-                                onChange={(e) => setSortBy(e.target.value)}
-                                value={sortBy}
-                            >
-                                <option>OWNED</option>
-                                <option>KTC</option>
-                                <option>TREND</option>
-                                <option>GP</option>
-                                <option>PPG</option>
-                            </select>
-                        </label>
                         <button className="close" onClick={() => setOptionsVisible(false)}>X</button>
                         <div className="modal-grid-item">
                             <div className="modal-grid-content header"><strong>Trend Range</strong>
