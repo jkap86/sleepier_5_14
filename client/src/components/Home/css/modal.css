@@ -93,6 +93,10 @@ table.modal {
     filter: contrast(2);
 }
 
+table.modal th.left:hover {
+    opacity: 1;
+}
+
 table.modal th,
 table.modal td {
     text-shadow: unset;

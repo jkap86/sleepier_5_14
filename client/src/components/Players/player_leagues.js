@@ -116,6 +116,7 @@ const PlayerLeagues = ({
                     getPlayerScore={getPlayerScore}
                     snapPercentageMin={snapPercentageMin}
                     snapPercentageMax={snapPercentageMax}
+                    setPlayerModalVisible={setPlayerModalVisible}
                     type='tertiary'
 
                 />

@@ -144,7 +144,7 @@ table {
   width: fit-content;
   min-width: 90%;
   position: relative;
-  z-index: 9;
+  z-index: 12;
   background-color: black;
 }
 

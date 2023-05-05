@@ -11,7 +11,8 @@ const LeagueInfo = ({
     getPlayerScore,
     type,
     snapPercentageMin,
-    snapPercentageMax
+    snapPercentageMax,
+    setPlayerModalVisible
 }) => {
     const dispatch = useDispatch();
     const { teamStats: stateStats } = useSelector(state => state.stats);
@@ -170,7 +171,16 @@ const LeagueInfo = ({
                     }
                 },
                 {
-                    text: trend_games && (Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur].points, 0) / trend_games.length).toFixed(1) || '-',
+                    text: <span onClick={(e) => {
+                        e.stopPropagation()
+                        setPlayerModalVisible({
+                            ...stateAllPlayers[starter],
+                            trend_games: trend_games,
+                            scoring_settings: scoring_settings
+                        })
+                    }}>
+                        {trend_games && (Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur].points, 0) / trend_games.length).toFixed(1) || '-'}
+                    </span>,
                     colSpan: 5
                 }
             ]

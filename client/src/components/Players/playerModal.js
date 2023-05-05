@@ -40,8 +40,8 @@ const PlayerModal = ({
                             .map(ss => {
                                 const total_score = Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur].points, 0) / player.trend_games.length
                                 return <tr key={ss}>
-                                    <th colSpan={2}>
-                                        {ss.replace('_', ' ')}
+                                    <th colSpan={2} className="left">
+                                        <p>{ss.replace('_', ' ')}</p>
                                     </th>
                                     <td>
                                         {player.scoring_settings[ss].toFixed(1)}
