@@ -1,7 +1,12 @@
 div.modal {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: fit-content;
+    height: fit-content;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
     z-index: 100;
     background-color: transparent;
 }
@@ -16,7 +21,7 @@ div.modal-grid {
     position: relative;
     padding: 5rem;
     border-radius: 5rem;
-    box-shadow: 0 0 3rem white;
+    box-shadow: 0 0 3rem white, inset 0 0 10rem black;
     border: 2rem ridge var(--te);
 }
 
@@ -71,4 +76,38 @@ button.close {
     font-weight: 900;
     background-color: transparent;
     border: none;
+}
+
+span.player_score {
+    position: relative;
+    z-index: 12;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table.modal {
+    table-layout: fixed;
+    filter: contrast(2);
+}
+
+table.modal th,
+table.modal td {
+    text-shadow: unset;
+    font-size: 3rem;
+    background-color: midnightblue;
+    opacity: .75;
+    padding: 1rem;
+    box-shadow: inset 0 0 1.5rem grey;
+}
+
+table.modal th:only-of-type,
+table.modal td {
+    text-align-last: center;
+}
+
+table.modal td:last-of-type {
+    text-align-last: right;
 }

@@ -3,29 +3,22 @@ import { useState } from "react";
 import LeagueInfo from "../Leagues/leagueInfo";
 import { useSelector } from 'react-redux';
 
-const PlayerLeagues = ({ leagues_owned, leagues_taken, leagues_available, player_id, trend_games, snapPercentageMin, snapPercentageMax }) => {
+const PlayerLeagues = ({
+    leagues_owned,
+    leagues_taken,
+    leagues_available,
+    trend_games,
+    snapPercentageMin,
+    snapPercentageMax,
+    getPlayerScore
+}) => {
     const [tab, setTab] = useState('Owned');
     const [page, setPage] = useState(1)
     const [itemActive, setItemActive] = useState('');
     const { allPlayers: stateAllPlayers } = useSelector(state => state.leagues)
     const { stats: stateStats } = useSelector(state => state.stats)
 
-    const getPlayerScore = (stats_array, scoring_settings) => {
-        let total_breakdown = {};
 
-        stats_array?.map(stats_game => {
-            Object.keys(stats_game.stats || {})
-                .filter(x => Object.keys(scoring_settings).includes(x))
-                .map(key => {
-                    if (!total_breakdown[key]) {
-                        total_breakdown[key] = 0
-                    }
-                    total_breakdown[key] += stats_game.stats[key] * scoring_settings[key]
-                })
-        })
-
-        return total_breakdown;
-    }
 
     let player_leagues_headers = [
         [
@@ -79,7 +72,7 @@ const PlayerLeagues = ({ leagues_owned, leagues_taken, leagues_available, player
                     }
                 },
                 {
-                    text: trend_games?.length > 0 && (Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur], 0) / trend_games.length).toFixed(1) || '-',
+                    text: trend_games?.length > 0 && (Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur].points, 0) / trend_games.length).toFixed(1) || '-',
                     colSpan: 1
                 },
                 {

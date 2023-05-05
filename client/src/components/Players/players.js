@@ -1,5 +1,5 @@
 import TableMain from "../Home/tableMain";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import headshot from '../../images/headshot.png';
 import PlayerLeagues from "./player_leagues";
 import TeamFilter from "../Home/teamFilter";
@@ -9,6 +9,7 @@ import { getLocalDate } from '../Functions/dates';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTrendDateStart, setTrendDateEnd, fetchStats, fetchValues } from "../../actions/actions";
+import PlayerModal from "./playerModal";
 
 const Players = ({ }) => {
     const dispatch = useDispatch();
@@ -19,7 +20,9 @@ const Players = ({ }) => {
     const [filterTeam, setFilterTeam] = useState('All')
     const [filterDraftClass, setFilterDraftClass] = useState('All')
     const [valueType, setValueType] = useState('SF')
+    const [statType, setStatType] = useState('Trend')
     const [optionsVisible, setOptionsVisible] = useState(false)
+    const [playerModalVisible, setPlayerModalVisible] = useState(false)
     const [snapPercentageMin, setSnapPercentageMin] = useState(0)
     const [snapPercentageMax, setSnapPercentageMax] = useState(100)
     const [sortBy, setSortBy] = useState('Owned')
@@ -30,8 +33,32 @@ const Players = ({ }) => {
     const { tab, trendDateStart, trendDateEnd } = useSelector(state => state.tab);
     const { isLoading: isLoadingStats, stats, error: errorStats } = useSelector(state => state.stats)
     const { isLoading: isLoadingDynastyValues, dynastyValues, error: errorDynstyValues } = useSelector(state => state.dynastyValues)
+    const modalRef = useRef(null)
+    const playerModalRef = useRef(null)
 
 
+    const getPlayerScore = (stats_array, scoring_settings) => {
+        let total_breakdown = {};
+
+        stats_array?.map(stats_game => {
+            Object.keys(stats_game.stats || {})
+                .filter(x => Object.keys(scoring_settings).includes(x))
+                .map(key => {
+                    if (!total_breakdown[key]) {
+                        total_breakdown[key] = {
+                            stats: 0,
+                            points: 0
+                        }
+                    }
+                    total_breakdown[key] = {
+                        stats: total_breakdown[key].stats + stats_game.stats[key],
+                        points: total_breakdown[key].points + (stats_game.stats[key] * scoring_settings[key])
+                    }
+                })
+        })
+
+        return total_breakdown;
+    }
 
     useEffect(() => {
 
@@ -44,6 +71,24 @@ const Players = ({ }) => {
         }
     }, [trendDateStart, trendDateEnd, playersharesFiltered])
 
+    const stat_categories = Array.from(
+        new Set(leaguesFiltered
+            .flatMap(league =>
+                Object.keys(league.scoring_settings || {})
+                    .filter(
+                        setting => (
+                            setting.startsWith('pass')
+                            || setting.startsWith('rush')
+                            || setting.startsWith('rec')
+                            || setting.startsWith('bonus')
+                            || setting.startsWith('fum ')
+                        ) && (
+                                league.scoring_settings[setting] > 0
+                            )
+                    )
+            )
+        )
+    )
 
     const playerShares_headers = [
         [
@@ -57,7 +102,7 @@ const Players = ({ }) => {
                     >
                         <option>OWNED</option>
                         <option>KTC</option>
-                        <option>TREND</option>
+                        <option>{statType.replace('_', ' ')}</option>
                         <option>GP</option>
                         <option>PPG</option>
                     </select>
@@ -120,7 +165,16 @@ const Players = ({ }) => {
                 className: 'half small left'
             },
             {
-                text: 'Trend',
+                text: <select className="main_header" value={statType} onChange={(e) => setStatType(e.target.value)}>
+                    <option>Trend</option>
+                    {
+                        stat_categories.map(cat => {
+                            return <option value={cat}>
+                                {cat.replace('_', ' ')}
+                            </option>
+                        })
+                    }
+                </select>,
                 colSpan: 1,
                 className: 'half small left'
             },
@@ -186,6 +240,8 @@ const Players = ({ }) => {
 
             }
 
+
+
             const trend_games = stats?.[player.id]
                 ?.filter(
                     s =>
@@ -195,6 +251,10 @@ const Players = ({ }) => {
 
                 )
 
+            const value_trend = (cur_value && prev_value && cur_value - prev_value) || '-'
+            const stat_trend = trend_games?.length > 0
+                && (trend_games?.reduce((acc, cur) => acc + (cur.stats?.[statType] || 0), 0) / trend_games?.length)?.toFixed(1)
+                || '-'
 
             return {
                 id: player.id,
@@ -233,7 +293,7 @@ const Players = ({ }) => {
                         colSpan: 1
                     },
                     {
-                        text: (cur_value && prev_value && cur_value - prev_value) || '-',
+                        text: statType === 'Trend' ? value_trend : stat_trend,
                         colSpan: 1
                     },
                     {
@@ -242,9 +302,21 @@ const Players = ({ }) => {
                         className: 'red'
                     },
                     {
-                        text: trend_games?.length > 0 && (trend_games?.reduce((acc, cur) => acc + cur.stats.pts_ppr, 0) / trend_games?.length)?.toFixed(1) || '-',
+                        text: <span className="player_score" onClick={(e) => {
+                            e.stopPropagation()
+                            setPlayerModalVisible({
+                                ...allPlayers[player.id],
+                                trend_games: trend_games
+                            })
+                        }}>
+                            {
+                                trend_games?.length > 0
+                                && (trend_games?.reduce((acc, cur) => acc + cur.stats.pts_ppr, 0) / trend_games?.length)?.toFixed(1)
+                                || '-'
+                            }
+                        </span>,
                         colSpan: 1,
-                        className: 'yellow'
+                        className: 'yellow relative'
                     }
                 ],
                 secondary_table: (
@@ -258,6 +330,8 @@ const Players = ({ }) => {
                         snapPercentageMax={snapPercentageMax}
                         player_id={player.id}
                         allPlayers={allPlayers}
+                        getPlayerScore={getPlayerScore}
+
                     />
                 )
             }
@@ -265,16 +339,18 @@ const Players = ({ }) => {
         .sort(
             (a, b) => sortBy === 'KTC'
                 ? (parseInt(b.list[3].text) || 0) - (parseInt(a.list[3].text) || 0)
-                : sortBy === 'TREND'
-                    ? (parseInt(b.list[4].text) || 0) - (parseInt(a.list[4].text) || 0)
+                : sortBy === statType.replace('_', ' ')
+                    ? (parseFloat(b.list[4].text) || 0) - (parseFloat(a.list[4].text) || 0)
                     : sortBy === 'GP'
                         ? (parseInt(b.list[5].text) || 0) - (parseInt(a.list[5].text) || 0)
                         : sortBy === 'PPG'
-                            ? (parseFloat(b.list[6].text) || 0) - (parseFloat(a.list[6].text) || 0)
+                            ? (parseFloat(b.list[6].text.props.children) || 0) - (parseFloat(a.list[6].text.props.children) || 0)
                             : (parseInt(b.list[1].text) || 0) - (parseInt(a.list[1].text) || 0)
 
         )
 
+
+    console.log(playerShares_body[0]?.list[6].text)
     useEffect(() => {
         if (filterPosition === 'Picks') {
             setFilterTeam('All')
@@ -303,24 +379,7 @@ const Players = ({ }) => {
         }
     }
 
-    const stat_categories = Array.from(
-        new Set(leaguesFiltered
-            .flatMap(league =>
-                Object.keys(league.scoring_settings || {})
-                    .filter(
-                        setting => (
-                            setting.startsWith('pass')
-                            || setting.startsWith('rush')
-                            || setting.startsWith('rec')
-                            || setting.startsWith('bonus')
-                            || setting.startsWith('fum ')
-                        ) && (
-                                league.scoring_settings[setting] > 0
-                            )
-                    )
-            )
-        )
-    )
+
 
 
     const teamFilter = <TeamFilter
@@ -369,11 +428,50 @@ const Players = ({ }) => {
 
     </span>
 
+
+    useEffect(() => {
+        const handleExitModal = (event) => {
+
+            if (!modalRef.current || !modalRef.current.contains(event.target)) {
+                setOptionsVisible(false)
+            }
+
+            if (!playerModalRef.current || !playerModalRef.current.contains(event.target)) {
+                setPlayerModalVisible(false)
+            }
+        };
+
+        document.addEventListener('mousedown', handleExitModal)
+        document.addEventListener('touchstart', handleExitModal)
+
+        return () => {
+            document.removeEventListener('mousedown', handleExitModal);
+            document.removeEventListener('touchstart', handleExitModal);
+        };
+    }, [])
+
+    const ppr_scoring_settings = {
+        'pass_yd': 0.03999999910593033,
+        'pass_td': 4,
+        'pass_2pt': 2,
+        'pass_int': -1,
+        'rush_yd': 0.10000000149011612,
+        'rush_2pt': 2,
+        'rush_td': 6,
+        'rec': 1,
+        'rec_yd': 0.10000000149011612,
+        'rec_2pt': 2,
+        'rec_td': 6,
+        'fum_lost': -2
+    }
+
+
+
     return <>
         {
             optionsVisible ?
-                <div className="modal">
-                    <div className="modal-grid">
+                <div className="modal" >
+                    <div className="modal-grid" ref={modalRef}>
                         <button className="close" onClick={() => setOptionsVisible(false)}>X</button>
                         <div className="modal-grid-item">
                             <div className="modal-grid-content header"><strong>Trend Range</strong>
@@ -442,7 +540,19 @@ const Players = ({ }) => {
                 :
                 null
         }
-
+        {
+            !playerModalVisible ?
+                null
+                :
+                <div className="modal" ref={playerModalRef} >
+                    <PlayerModal
+                        setPlayerModalVisible={setPlayerModalVisible}
+                        player={playerModalVisible}
+                        scoring_settings={ppr_scoring_settings}
+                        getPlayerScore={getPlayerScore}
+                    />
+                </div>
+        }
 
 
         <TableMain

@@ -170,7 +170,7 @@ const LeagueInfo = ({
                     }
                 },
                 {
-                    text: trend_games && (Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur], 0) / trend_games.length).toFixed(1) || '-',
+                    text: trend_games && (Object.keys(player_score || {}).reduce((acc, cur) => acc + player_score[cur].points, 0) / trend_games.length).toFixed(1) || '-',
                     colSpan: 5
                 }
             ]
