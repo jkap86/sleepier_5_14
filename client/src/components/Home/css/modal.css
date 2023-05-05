@@ -72,13 +72,3 @@ button.close {
     background-color: transparent;
     border: none;
 }
-
-label.sort {
-    position: absolute;
-    top: 0;
-    left: 0;
-    color: var(--color2);
-    width: fit-content;
-
-    margin: 0;
-}

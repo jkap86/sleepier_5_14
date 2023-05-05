@@ -451,26 +451,21 @@ i.fa-filter,
 i.fa-sort {
     color: var(--color2);
     font-size: 5rem;
-    position: absolute;
+
 
 }
 
 i.fa-filter {
     top: 0;
     right: 0;
+    position: absolute;
 }
 
-i.fa-sort {
-    top: 0;
-    left: 0;
-    bottom: 0;
-
-    margin: 1rem;
-}
 
 label.sort {
-    position: relative;
-    width: 25rem !important;
-
-
+    position: absolute;
+    width: 15rem;
+    top: 1rem;
+    left: 1rem;
+    height: 5rem;
 }
