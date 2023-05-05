@@ -367,20 +367,45 @@ input.editRank {
 input.main_header,
 select.main_header {
     margin: 0;
-    background-color: var(--color2);
-    color: black;
-    width: fit-content;
+    color: var(--color2);
     max-width: 100%;
-    font-family: 'GROUPE', sans-serif;
+    min-width: 100%;
+    font-family: 'Pulang', sans-serif;
     font-weight: 900;
     text-align: center;
-    box-shadow: inset 0 0 2rem black;
-    font-size: 2rem;
+    font-size: 2.5rem;
     box-sizing: border-box;
     border-radius: 5rem;
     border: none;
     display: inline;
-    padding: .25rem;
+    padding: 0.25rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: fit-content;
+}
+
+select.main_header.hidden_behind {
+    width: fit-content;
+    left: 0;
+}
+
+.relative {
+    position: relative;
+}
+
+span.select {
+    color: var(--color2);
+    font-family: 'Pulang', sans-serif;
+    position: relative;
+    z-index: 0;
+    width: fit-content;
+}
+
+
+select.main_header>option {
+    background-color: white;
+    text-align: center;
 }
 
 select.main_header.half {

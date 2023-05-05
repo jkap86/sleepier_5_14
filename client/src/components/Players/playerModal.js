@@ -2,14 +2,13 @@ import { avatar } from "../Functions/misc";
 
 
 const PlayerModal = ({
-    scoring_settings,
     getPlayerScore,
     setPlayerModalVisible,
     player
 }) => {
 
 
-    const player_score = getPlayerScore(player.trend_games, scoring_settings)
+    const player_score = getPlayerScore(player.trend_games, player.scoring_settings)
 
     return <>
 
@@ -45,7 +44,7 @@ const PlayerModal = ({
                                         {ss.replace('_', ' ')}
                                     </th>
                                     <td>
-                                        {scoring_settings[ss].toFixed(1)}
+                                        {player.scoring_settings[ss].toFixed(1)}
                                     </td>
                                     <td>
                                         {
