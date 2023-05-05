@@ -20,7 +20,7 @@ const Players = ({ }) => {
     const [filterTeam, setFilterTeam] = useState('All')
     const [filterDraftClass, setFilterDraftClass] = useState('All')
     const [valueType, setValueType] = useState('SF')
-    const [statType, setStatType] = useState('Trend')
+    const [statType, setStatType] = useState('KTC Trend')
     const [optionsVisible, setOptionsVisible] = useState(false)
     const [playerModalVisible, setPlayerModalVisible] = useState(false)
     const [snapPercentageMin, setSnapPercentageMin] = useState(0)
