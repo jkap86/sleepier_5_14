@@ -39,7 +39,7 @@ const Search = ({ id, sendSearched, placeholder, list, tab, isLoading }) => {
             const all_options = list
             options = all_options.filter(x =>
                 x.text?.trim().toLowerCase()
-                    .replace("'", '')
+                    .replace(/[^a-z]/g, "")
                     .includes(s.trim().toLowerCase()))
             visible = true
         }

@@ -122,8 +122,8 @@ const LeagueInfo = ({
         : []
 
     const picks_body = active_roster?.draft_picks
-        .sort((a, b) => a.season - b.season || a.round - b.round || a.order - b.order)
-        .map(pick => {
+        ?.sort((a, b) => a.season - b.season || a.round - b.round || a.order - b.order)
+        ?.map(pick => {
             return {
                 id: `${pick.season}_${pick.round}_${pick.original_user.user_id}`,
                 list: [
