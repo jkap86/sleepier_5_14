@@ -153,14 +153,14 @@ const Players = ({ }) => {
                     &nbsp;
                     <i
                         className="fa-solid fa-filter fa-beat"
-
+                        onClick={() => setOptionsVisible(prevState => !prevState)}
                     >
 
                     </i>
                 </>,
                 colSpan: 3,
-                className: 'small left',
-                onClick: () => setOptionsVisible(prevState => !prevState)
+                className: 'small left'
+
             }
         ],
         [
@@ -355,14 +355,25 @@ const Players = ({ }) => {
                         className: 'red'
                     },
                     {
-                        text: <span className="player_score" onClick={(e) => {
-                            e.stopPropagation()
-                            setPlayerModalVisible({
-                                ...allPlayers[player.id],
-                                trend_games: trend_games,
-                                scoring_settings: ppr_scoring_settings
-                            })
-                        }}>
+                        text: <span
+                            className="player_score"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                setPlayerModalVisible({
+                                    ...allPlayers[player.id],
+                                    trend_games: trend_games,
+                                    scoring_settings: ppr_scoring_settings
+                                })
+                            }}
+                            onTouchStart={(e) => {
+                                e.stopPropagation()
+                                setPlayerModalVisible({
+                                    ...allPlayers[player.id],
+                                    trend_games: trend_games,
+                                    scoring_settings: ppr_scoring_settings
+                                })
+                            }}
+                        >
                             {
                                 trend_games?.length > 0
                                 && (trend_games?.reduce((acc, cur) => acc + cur.stats.pts_ppr, 0) / trend_games?.length)?.toFixed(1)
