@@ -3,6 +3,8 @@ const db = require("../models");
 const League = db.leagues;
 const User = db.users;
 const axios = require('../api/axiosInstance');
+const sequelize = db.sequelize;
+const Op = db.Sequelize.Op;
 
 exports.sync = async (req, res, app) => {
     const state = app.get('state')
@@ -64,11 +66,13 @@ exports.find = async (req, res) => {
         return league_ids[index] = league.league_id
     })
 
+
     const [leagues_to_add, leagues_to_update, leagues_up_to_date] = await getLeaguesToUpsert(req.body.user_id, league_ids)
 
+    console.log(`${leagues_to_add.length}-To Add, ${leagues_to_update.length}-To Update, ${leagues_up_to_date.length}-Already up-to-date`)
 
-    let new_leagues = await getBatchLeaguesDetails(leagues_to_add, state.display_week)
-    let updated_leagues = await getBatchLeaguesDetails(leagues_to_update, state.display_week)
+    let new_leagues = await getBatchLeaguesDetails(leagues_to_add, state.display_week, true)
+    let updated_leagues = await getBatchLeaguesDetails(leagues_to_update, state.display_week, false)
 
 
     try {
@@ -79,7 +83,45 @@ exports.find = async (req, res) => {
             keys.push(`matchups_${state.display_week}`)
         }
 
-        await League.bulkCreate([...new_leagues, ...updated_leagues].flat(), {
+        const user_data = []
+        const user_league_data = []
+
+        new_leagues.map(league => {
+            return league.users.map(user => {
+                user_data.push({
+                    user_id: user.user_id,
+                    username: user.display_name,
+                    avatar: user.avatar,
+                    type: 'LM',
+                    updatedAt: new Date()
+                })
+
+                user_league_data.push({
+                    userUserId: user.user_id,
+                    leagueLeagueId: league.league_id
+                })
+            })
+        })
+
+        await User.bulkCreate(user_data, { ignoreDuplicates: true })
+
+        await League.bulkCreate(new_leagues, {
+            updateOnDuplicate: keys
+        })
+
+        await sequelize.model('userLeagues').bulkCreate(user_league_data, { ignoreDuplicates: true })
+    } catch (error) {
+        console.log(error)
+    }
+
+    try {
+        const keys = ["name", "avatar", "settings", "scoring_settings", "roster_positions",
+            "rosters", "drafts", "updatedAt"]
+
+        const matchup_keys = Array.from(Array(Math.max(state.display_week, 18)).keys()).map(key => `matchups_${key + 1}`)
+        keys.push(...matchup_keys)
+
+        await League.bulkCreate(updated_leagues, {
             updateOnDuplicate: keys
         })
     } catch (error) {
@@ -166,7 +208,7 @@ const getDraftPicks = (traded_picks, rosters, users, drafts, league) => {
     return original_picks
 }
 
-const getLeagueDetails = async (league_id, display_week) => {
+const getLeagueDetails = async (league_id, display_week, new_league) => {
     try {
         const league = await axios.get(`https://api.sleeper.app/v1/league/${league_id}`)
         const users = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/users`)
@@ -178,7 +220,19 @@ const getLeagueDetails = async (league_id, display_week) => {
         if (display_week > 0 && display_week < 19) {
             const matchup_week = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/matchups/${display_week}`)
             matchups[`matchups_${display_week}`] = matchup_week.data
+
+            if (new_league) {
+                (await Promise.all(Array.from(Array(Math.max(display_week, 18))).keys()))
+                    .map(async week => {
+                        const matchup_prev = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/matchups/${week + 1}`)
+
+                        matchups[`matchups_${week + 1}`] = matchup_prev.data
+
+                    })
+            }
         }
+
+
 
         const draft_picks = getDraftPicks(traded_picks.data, rosters.data, users.data, drafts.data, league.data)
 
@@ -241,15 +295,16 @@ const getLeagueDetails = async (league_id, display_week) => {
             rosters: rosters_username,
             drafts: drafts_array,
             ...matchups,
-            updatedAt: Date.now()
+            updatedAt: Date.now(),
+            users: users.data
         }
     } catch (error) {
-        console.error(`Error processing league ${league_id}: ${error.message}`);
+        console.error(error);
         return null;
     }
 }
 
-const getBatchLeaguesDetails = async (leagueIds, display_week) => {
+const getBatchLeaguesDetails = async (leagueIds, display_week, new_league) => {
 
     const allResults = [];
 
@@ -258,13 +313,15 @@ const getBatchLeaguesDetails = async (leagueIds, display_week) => {
     for (let i = 0; i < leagueIds.length; i += chunkSize) {
         const chunk = leagueIds.slice(i, i + chunkSize);
         const chunkResults = await Promise.all(chunk.map(async (leagueId) => {
-            const result = await getLeagueDetails(leagueId, display_week);
+            const result = await getLeagueDetails(leagueId, display_week, new_league);
             return result !== null ? result : undefined;
         }));
         allResults.push(...chunkResults);
     }
 
-    return allResults.filter(result => result !== undefined);
+    const results = await Promise.all(allResults)
+
+    return results.filter(result => result !== undefined);
 }
 
 const getLeaguesToUpsert = async (user_id, league_ids) => {
@@ -282,10 +339,7 @@ const getLeaguesToUpsert = async (user_id, league_ids) => {
 
     let leagues_user_db = user.leagues
 
-    const now = new Date()
     const cutoff = new Date(new Date() - (24 * 60 * 60 * 1000))
-
-
 
     const leagues_to_add = league_ids
         .filter(l =>
@@ -302,6 +356,8 @@ const getLeaguesToUpsert = async (user_id, league_ids) => {
         .filter(l_db =>
             l_db.updatedAt >= cutoff
         )
+
+
 
     return [leagues_to_add, leagues_to_update, leagues_up_to_date]
 }

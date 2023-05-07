@@ -11,6 +11,9 @@ const axios = require('../api/axiosInstance');
 
 exports.create = async (req, res) => {
     console.log(`***SEARCHING FOR ${req.body.username}***`)
+
+    // check if user exists in Sleeper.  Update info if exists, send error message if not.
+
     const user = await axios.get(`http://api.sleeper.app/v1/user/${req.body.username}`)
 
     if (user.data?.user_id) {
@@ -18,7 +21,7 @@ exports.create = async (req, res) => {
             user_id: user.data.user_id,
             username: user.data.display_name,
             avatar: user.data.avatar,
-            type: 'S',
+            type: 'S', // S = 'Searched'
             updatedAt: new Date()
 
         })
