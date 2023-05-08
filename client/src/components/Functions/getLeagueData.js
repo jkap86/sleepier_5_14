@@ -1,13 +1,13 @@
 export const getLeagueData = (leagues, user_id, state) => {
     let leagues_all = []
     let players_all = {};
-    let leaguemates_all = [];
+    let leaguemates_all = {};
     let matchups_all = [];
 
     leagues.map(league => {
         const userRoster = league.rosters?.find(r => r.user_id === user_id || r.co_owners?.find(co => co?.user_id === user_id))
 
-        if (userRoster?.players || league.drafts.find(d => ['drafting', 'paused'].includes(d.status))) {
+        if (userRoster?.players || (userRoster && league.drafts.find(d => ['drafting', 'paused'].includes(d.status)))) {
             leagues_all.push({
                 ...league,
                 userRoster: userRoster
