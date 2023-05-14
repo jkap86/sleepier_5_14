@@ -16,14 +16,14 @@ exports.leaguemate = async (req, res) => {
                 [Op.contains]: [req.body.manager]
             }
         })
-    } else if (req.body.leaguemates) {
+    }/* else if (req.body.leaguemates) {
         filters.push({
             managers: {
                 [Op.overlap]: req.body.leaguemates
             }
         })
 
-    }
+    } */
 
     if (req.body.player) {
         if (req.body.player.includes('.')) {
@@ -56,24 +56,41 @@ exports.leaguemate = async (req, res) => {
             order: [['status_updated', 'DESC']],
             offset: req.body.offset,
             limit: req.body.limit,
-            where: {
-                [Op.and]: filters
-            },
+            where: { [Op.and]: filters },
             attributes: ['transaction_id', 'status_updated', 'rosters', 'managers', 'adds', 'drops', 'draft_picks', 'leagueLeagueId'],
             include: [
-                {
-                    model: League,
-                    attributes: ['name', 'avatar', 'roster_positions', 'scoring_settings', 'settings'],
 
+                {
+                    model: User,
+                    attributes: [],
+                    through: { attributes: [] },
+                    include: {
+                        model: User,
+                        as: 'leaguemates',
+                        attributes: [],
+                        through: { attributes: [] },
+                        where: {
+                            user_id: req.body.user_id
+                        },
+                        duplicating: false,
+
+                    },
+                    duplicating: false,
+                    required: true
                 }
             ],
+            group: ['trade.transaction_id'],
+
             raw: true
         })
     } catch (error) {
         console.log(error)
     }
 
-    res.send(lmTrades)
+    res.send({
+        ...lmTrades,
+        count: lmTrades?.count?.length
+    })
 
 }
 

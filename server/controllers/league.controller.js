@@ -85,8 +85,9 @@ exports.find = async (req, res) => {
 
         const user_data = []
         const user_league_data = []
+        const userLeaguemateData = []
 
-        new_leagues.map(league => {
+        updated_leagues.forEach(league => {
             return league.users.map(user => {
                 user_data.push({
                     user_id: user.user_id,
@@ -100,6 +101,15 @@ exports.find = async (req, res) => {
                     userUserId: user.user_id,
                     leagueLeagueId: league.league_id
                 })
+
+                league.users
+                    .filter(u => u.user_id !== user.user_id).map(u => {
+
+                        userLeaguemateData.push({
+                            userUserId: user.user_id,
+                            leaguemateUserId: u.user_id
+                        })
+                    })
             })
         })
 
@@ -108,7 +118,7 @@ exports.find = async (req, res) => {
         await League.bulkCreate(new_leagues, {
             updateOnDuplicate: keys
         })
-
+        await sequelize.model('userLeaguemates').bulkCreate(userLeaguemateData, { ignoreDuplicates: true })
         await sequelize.model('userLeagues').bulkCreate(user_league_data, { ignoreDuplicates: true })
     } catch (error) {
         console.log(error)

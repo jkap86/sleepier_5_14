@@ -121,7 +121,7 @@ export const fetchFilteredLmTrades = (searchedPlayerId, searchedManagerId, leagu
 
     try {
         const trades = await axios.post('/trade/leaguemate', {
-            user_id: user.user_id,
+            user_id: user.user.user_id,
             leaguemates: Object.keys(leagues.leaguematesDict),
             player: searchedPlayerId,
             manager: searchedManagerId,

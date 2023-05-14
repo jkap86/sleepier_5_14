@@ -41,7 +41,8 @@ module.exports = (sequelize, Sequelize) => {
             {
                 fields: ['status_updated', 'leagueLeagueId', 'managers'],
                 using: 'BTREE',
-                order: [['status_updated', 'DESC']]
+                order: [['status_updated', 'DESC']],
+                group: ['trade.transaction_id'],
             }
         ],
         partitionKey: 'status_updated',

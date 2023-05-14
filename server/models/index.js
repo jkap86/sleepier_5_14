@@ -10,7 +10,7 @@ const sequelize = new Sequelize(dbConfig.DATABASE_URL, {
     dialectOptions: { ssl: ssl, useUTC: false },
     logging: false,
     pool: {
-        max: 5,
+        max: 50,
         min: 0,
         acquire: 30000,
         idle: 10000
@@ -36,9 +36,11 @@ db.leagues.belongsToMany(db.users, { through: { model: 'userLeagues' } })
 db.leagues.hasMany(db.trades)
 db.trades.belongsTo(db.leagues)
 
-/*
-db.users.belongsToMany(db.users, { as: 'leaguemates', through: db.userLeaguemates })
+db.users.belongsToMany(db.trades, { through: { model: 'userTrades' } })
+db.trades.belongsToMany(db.users, { through: { model: 'userTrades' } })
 
+db.users.belongsToMany(db.users, { as: 'leaguemates', through: { model: 'userLeaguemates' } })
+/*
 db.users.belongsToMany(db.trades, { through: db.lmTrades, as: 'trades1' })
 db.trades.belongsToMany(db.users, { through: db.lmTrades, as: 'users1', indexes: [{ using: 'BRIN', fields: ['userUserId'] }] })
 
