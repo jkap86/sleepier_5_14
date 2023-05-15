@@ -104,14 +104,17 @@ export const getLineupCheck = (matchup, league, stateAllPlayers, weeklyRankings,
             })
 
             const lateNotInFlex = matchup.starters?.find((x, starter_index) => {
-                const alt_gametime = new Date(stateAllPlayers[x]?.gametime * 1000)
+                const alt_kickoff = new Date(parseInt(schedule
+                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === stateAllPlayers[x]?.team))
+                    ?.kickoff * 1000))
+                const alt_gametime = new Date(alt_kickoff)
                 const alt_day = alt_gametime.getDay() <= 2 ? alt_gametime.getDay() + 7 : alt_gametime.getDay()
                 const alt_hour = alt_gametime.getHours()
                 const alt_timeslot = parseFloat(alt_day + '.' + alt_hour)
 
                 return (
                     timeslot > 7.17
-                    && (alt_timeslot || 0) < timeslot
+                    && alt_timeslot < timeslot
 
                     && position_map[slot].includes(stateAllPlayers[x]?.position)
                     && position_map[starting_slots[starter_index]].includes(stateAllPlayers[cur_id]?.position)
