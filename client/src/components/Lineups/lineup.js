@@ -27,7 +27,7 @@ const Lineup = ({
 
     const active_player = lineup_check?.find(x => `${x.slot}_${x.index}` === itemActive)?.current_player
 
-    console.log({ matchup: matchup })
+
 
     useEffect(() => {
         if (itemActive) {

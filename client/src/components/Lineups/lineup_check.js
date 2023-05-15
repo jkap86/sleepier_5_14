@@ -79,6 +79,8 @@ const LineupCheck = ({
         const lineup_check = lineups?.lineup_check
         const starting_slots = lineups?.starting_slots
         const players_points = { ...lineups?.players_points, ...opponentMatchup?.players_points }
+
+        console.log(lineup_check)
         return {
             id: league.league_id,
             search: {

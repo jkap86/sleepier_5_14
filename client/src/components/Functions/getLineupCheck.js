@@ -84,7 +84,7 @@ export const getLineupCheck = (matchup, league, stateAllPlayers, weeklyRankings,
                     position_map[slot].includes(stateAllPlayers[x]?.position)
                 )
                 || []
-            const earlyInFlex = timeslot < 7 && matchup.starters?.find((x, starter_index) => {
+            const earlyInFlex = matchup.starters?.find((x, starter_index) => {
                 const alt_kickoff = new Date(parseInt(schedule
                     ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === stateAllPlayers[x]?.team))
                     ?.kickoff * 1000))
@@ -93,26 +93,30 @@ export const getLineupCheck = (matchup, league, stateAllPlayers, weeklyRankings,
                 const alt_hour = alt_gametime.getHours()
                 const alt_timeslot = parseFloat(alt_day + '.' + alt_hour)
 
-                return (
+                return timeslot < 7
+                    && alt_timeslot > timeslot
+                /*
+                && position_map[slot].includes(stateAllPlayers[x]?.position)
+                && position_map[starting_slots[starter_index]].includes(stateAllPlayers[cur_id]?.position)
+                && position_map[league.roster_positions[starter_index]].length < position_map[slot].length
+                */
 
-                    alt_timeslot > timeslot
-                    && position_map[slot].includes(stateAllPlayers[x]?.position)
-                    && position_map[starting_slots[starter_index]].includes(stateAllPlayers[cur_id]?.position)
-                    && position_map[league.roster_positions[starter_index]].length < position_map[slot].length
-                )
             })
 
-            const lateNotInFlex = timeslot > 7.17 && matchup.starters?.find((x, starter_index) => {
+            const lateNotInFlex = matchup.starters?.find((x, starter_index) => {
                 const alt_gametime = new Date(stateAllPlayers[x]?.gametime * 1000)
                 const alt_day = alt_gametime.getDay() <= 2 ? alt_gametime.getDay() + 7 : alt_gametime.getDay()
                 const alt_hour = alt_gametime.getHours()
                 const alt_timeslot = parseFloat(alt_day + '.' + alt_hour)
 
                 return (
-                    alt_timeslot < timeslot
+                    timeslot > 7.17
+                    && (alt_timeslot || 0) < timeslot
+
                     && position_map[slot].includes(stateAllPlayers[x]?.position)
                     && position_map[starting_slots[starter_index]].includes(stateAllPlayers[cur_id]?.position)
                     && position_map[league.roster_positions[starter_index]].length > position_map[slot].length
+
                 )
             })
 
@@ -125,7 +129,10 @@ export const getLineupCheck = (matchup, league, stateAllPlayers, weeklyRankings,
                 earlyInFlex: earlyInFlex,
                 lateNotInFlex: lateNotInFlex,
                 nonQBinSF: position_map[slot].includes('QB') && stateAllPlayers[(matchup?.starters || [])[index]]?.position !== 'QB',
-                slot_options: slot_options
+                slot_options: slot_options,
+                player: stateAllPlayers[matchup?.starters[index]]?.full_name,
+                timeslot: timeslot
+
             })
         })
         return lineup_check
