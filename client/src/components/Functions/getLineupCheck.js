@@ -95,11 +95,11 @@ export const getLineupCheck = (matchup, league, stateAllPlayers, weeklyRankings,
 
                 return timeslot < 7
                     && alt_timeslot > timeslot
-                /*
-                && position_map[slot].includes(stateAllPlayers[x]?.position)
-                && position_map[starting_slots[starter_index]].includes(stateAllPlayers[cur_id]?.position)
-                && position_map[league.roster_positions[starter_index]].length < position_map[slot].length
-                */
+
+                    && position_map[slot].includes(stateAllPlayers[x]?.position)
+                    && position_map[starting_slots[starter_index]].includes(stateAllPlayers[cur_id]?.position)
+                    && position_map[league.roster_positions[starter_index]].length < position_map[slot].length
+
 
             })
 
