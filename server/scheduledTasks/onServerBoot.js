@@ -47,7 +47,7 @@ module.exports = async (app) => {
     const allplayers = await getAllPlayers()
     app.set('allplayers', allplayers)
 
-    const nflschedule = await axios.get(`https://api.myfantasyleague.com/2022/export?TYPE=nflSchedule&W=ALL&JSON=1`)
+    const nflschedule = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=ALL&JSON=1`)
 
     const schedule = {}
 

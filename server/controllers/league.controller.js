@@ -232,7 +232,7 @@ const getLeagueDetails = async (league_id, display_week, new_league) => {
             matchups[`matchups_${display_week}`] = matchup_week.data
 
             if (new_league) {
-                (await Promise.all(Array.from(Array(Math.max(display_week, 18))).keys()))
+                (await Promise.all(Array.from(Array(Math.min(display_week, 18))).keys()))
                     .map(async week => {
                         const matchup_prev = await axios.get(`https://api.sleeper.app/v1/league/${league_id}/matchups/${week + 1}`)
 
