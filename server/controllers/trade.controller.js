@@ -59,7 +59,10 @@ exports.leaguemate = async (req, res) => {
             where: { [Op.and]: filters },
             attributes: ['transaction_id', 'status_updated', 'rosters', 'managers', 'adds', 'drops', 'draft_picks', 'leagueLeagueId'],
             include: [
-
+                {
+                    model: League,
+                    attributes: ['league_id', 'name', 'avatar', 'roster_positions', 'scoring_settings', 'settings'],
+                },
                 {
                     model: User,
                     attributes: [],
@@ -79,8 +82,7 @@ exports.leaguemate = async (req, res) => {
                     required: true
                 }
             ],
-            group: ['trade.transaction_id'],
-
+            group: ['trade.transaction_id', 'league.league_id'],
             raw: true
         })
     } catch (error) {
